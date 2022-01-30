@@ -13,7 +13,7 @@ package:
   individually: true
 
 functions:
-  # STARTING STOPPING MODEL FUNCTIONS 
+  # STARTING STOPPING MODEL FUNCTIONS
   startAllModels:
     name: start_all_models
     handler: start_all_models.lambda_handler
@@ -42,9 +42,9 @@ functions:
         - "!package-lock.json"
         - "!package.json"
 
-  startAllModels:
-    name: start_all_models
-    handler: start_all_models.lambda_handler
+  stopAllModels:
+    name: stop_models
+    handler: stop_models.lambda_handler
     description: Starts all Rekognition models before ingestion jobs.
     timeout: 10 # seconds
     memorySize: 128 # mb
@@ -76,7 +76,7 @@ functions:
     description: Get details and enrich a specific property.
     timeout: 900 # seconds
     memorySize: 128 # mb
-    # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO! 
+    # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO!
     # events:
     #   - sqs: arn:aws:sqs:us-east-1:735074111034:properties-aggregation-stage
     package:
