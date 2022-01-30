@@ -13,11 +13,23 @@ package:
   individually: true
 
 functions:
+  # getPropertyDetails:
+  #   name: get_property_details
+  #   handler: get_property_details.handler
+  #   description: Get details and enrich a specific property.
+  #   timeout: 900 # seconds
+  #   memorySize: 128 # mb
+  #   package:
+  #     patterns:
+  #       - "!node_modules/**"
+  #       - "!yarn.lock"
+  #       - "!package-lock.json"
+  #       - "!package.json"
   getPropertiesForArea:
     name: get_properties_for_areas
     handler: get_properties_for_area.handler
     description: Get and enqueue all properties for a specific area.
-    timeout: 3000 # seconds
+    timeout: 900 # seconds
     memorySize: 128 # mb
     package:
       patterns:
