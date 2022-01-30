@@ -14,7 +14,7 @@ package:
 
 functions:
   getPropertiesForArea:
-    name: get_properties_for_area
+    name: get_properties_for_areas
     handler: get_properties_for_area.handler
     description: Get and enqueue all properties for a specific area.
     timeout: 3000 # seconds
