@@ -13,24 +13,72 @@ package:
   individually: true
 
 functions:
-  # getPropertyDetails:
-  #   name: get_property_details
-  #   handler: get_property_details.handler
-  #   description: Get details and enrich a specific property.
-  #   timeout: 900 # seconds
-  #   memorySize: 128 # mb
-  #   package:
-  #     patterns:
-  #       - "!node_modules/**"
-  #       - "!yarn.lock"
-  #       - "!package-lock.json"
-  #       - "!package.json"
+  # STARTING STOPPING MODEL FUNCTIONS 
+  startAllModels:
+    name: start_all_models
+    handler: start_all_models.lambda_handler
+    description: Starts all Rekognition models before ingestion jobs.
+    timeout: 10 # seconds
+    memorySize: 128 # mb
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  startStopModel:
+    name: start_stop_models
+    handler: start_stop_models.lambda_handler
+    description: Starts or stops a specific Rekognition model (general, kitchen, bathroom, etc) ingestion job needs to use. Will only delete message once started.
+    timeout: 10 # seconds
+    memorySize: 128 # mb
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:rekognition-models
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  startAllModels:
+    name: start_all_models
+    handler: start_all_models.lambda_handler
+    description: Starts all Rekognition models before ingestion jobs.
+    timeout: 10 # seconds
+    memorySize: 128 # mb
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  # DATA INGESTION FUNCTIONS
+
   getPropertiesForArea:
-    name: get_properties_for_areas
-    handler: get_properties_for_area.handler
+    name: get_properties_for_area
+    handler: get_properties_for_area.lambda_handler
     description: Get and enqueue all properties for a specific area.
     timeout: 900 # seconds
     memorySize: 128 # mb
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  getPropertyDetails:
+    name: get_property_details
+    handler: get_property_details.lambda_handler
+    description: Get details and enrich a specific property.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO! 
+    # events:
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:properties-aggregation-stage
     package:
       patterns:
         - "!node_modules/**"
