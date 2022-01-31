@@ -3,19 +3,18 @@
 ## Table of Contents
 
 ---
+
 - [Data Pipeline](#Data-Pipeline)
   - [Data Collection & Enrichment](#Data-Collection-&-Enrichment)
 - [Data Sources](#Data-Sources)
   - [Listings](#Properties-for-Sale)
   - [Details](#Property-Details)
 
-
-
 ## Data Pipeline
 
 ---
 
-### Data Collection & Enrichment 
+### Data Collection & Enrichment
 
 Automated process to start the Reckognition models and stay up to date with given areas.
 
@@ -25,17 +24,22 @@ Automated process to start the Reckognition models and stay up to date with give
 - 3 - start_stop_models reads the messages starts the model
 - 4 - 30 minutes later Eventbridge starts data collection by triggering - Lambda: get_properties_for_area
 - 3 - get_properties_for_area loads each specific property onto the the
-  properties-aggregation-stage SQS queue as a seperate message. Note: loads in chunks of 200 until a property that is already in dynamo is fetched
+  new-listings SQS queue as a seperate message. Note: loads in chunks of 200 until a property that is already in dynamo is fetched
 - 4 - get_property_details reads these messages, ensures that each message is not processed yet by crossrefrenceing dynamo, hits the description NLP, image processing through the room specific Reckognition custom label projects, saves to dynamo, writes a message to the cleaned_properties queue
 - 5 - Node Server picks up the cleaned_properties, adds remodel data, persists in RDS
 
-### Deployment 
+#### Remove Sold Listings - Lambda
+
+Automated archival of sold properties.
+
+- 1 - Eventbridge starts model Lambdas:
+  - get_sold_properties_for_area
+- 2 - get_sold_properties_for_area marks all properties as sold in dynamo and sends independent messages to mark a property as sold on the sold-properties SQS queue
+- 3 - mark_property_sold reads the messages marks the property sold in RDS
+
+### Deployment
 
 All deployments are taken care of with every push by an automated CI/CD pipeline, leveraging github [actions](https://github.com/propertybot/data-pipeline/blob/main/.github/workflows/main.yml) and [serverless](serverless.yml).
-
-#### Remove Sold Listings - Lambda: IN PROGRESS
-
-
 
 ## Data Sources
 

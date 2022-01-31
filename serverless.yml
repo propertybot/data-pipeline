@@ -78,7 +78,35 @@ functions:
     memorySize: 128 # mb
     # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO!
     # events:
-    #   - sqs: arn:aws:sqs:us-east-1:735074111034:properties-aggregation-stage
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:new-listings-stage
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  getSoldPropertiesForArea:
+    name: get_sold_properties_for_area
+    handler: get_sold_properties_for_area.lambda_handler
+    description: Get all the sold properties for a specific area.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  markPropertySold:
+    name: mark_property_sold
+    handler: mark_property_sold.lambda_handler
+    description: Marks the property sold in RDS.
+    timeout: 10 # seconds
+    memorySize: 128 # mb
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:sold-properties
     package:
       patterns:
         - "!node_modules/**"

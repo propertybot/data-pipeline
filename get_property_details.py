@@ -521,7 +521,6 @@ def handle_property(property):
 # In[ ]:
 
 def lambda_handler(event, context):
-    print("rung")
     for record in event['Records']:
         property = json.loads(record["body"])
         handle_property(property)
