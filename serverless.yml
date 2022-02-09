@@ -5,6 +5,8 @@ provider:
   runtime: python3.8
   stage: dev
   region: us-east-1
+  iam:
+    role: arn:aws:iam::735074111034:role/lambda-full-permisions
 
 plugins:
   - serverless-python-requirements
