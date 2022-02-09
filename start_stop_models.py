@@ -43,11 +43,16 @@ def main_start_model(room):
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-01-03T10.07.41/1641233261997'
         version_name = 'kitchen-labeling.2022-01-03T10.07.41'
         start_model(project_arn, model_arn, version_name, min_inference_units)
+    elif room == 'exterior':
+        # Start Exterior Labeling
+        project_arn = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/1643260707294'
+        model_arn = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
+        version_name = 'exterior-labeling.2022-02-03T22.48.55'
+        start_model(project_arn, model_arn, version_name, min_inference_units)
     else:
-        return
-        project_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/general-room-labeling/1640063576315'
-        model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/general-room-labeling/version/general-room-labeling.2022-01-07T17.10.57/1641604257980'
-        version_name = 'general-room-labeling.2022-01-07T17.10.57'
+        project_arn = 'arn:aws:rekognition:us-east-2:735074111034:project/general-labeling/1644182798393'
+        model_arn = 'arn:aws:rekognition:us-east-2:735074111034:project/general-labeling/version/general-labeling.2022-02-08T15.00.43/1644361243238'
+        version_name = 'general-labeling.2022-02-08T15.00.43'
         start_model(project_arn, model_arn, version_name, min_inference_units)
 
 
@@ -80,8 +85,11 @@ def main_stop_model(room):
         # Start Kitchen Labeling
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-01-03T10.07.41/1641233261997'
         stop_model(model_arn)
+    elif room == 'exterior':
+        model_arn = 'arn: aws: rekognition: us-east-2: 735074111034: project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
+        stop_model(model_arn)
     else:
-        model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/general-room-labeling/version/general-room-labeling.2022-01-07T17.10.57/1641604257980'
+        model_arn = 'arn:aws:rekognition:us-east-2:735074111034:project/general-labeling/version/general-labeling.2022-02-08T15.00.43/1644361243238'
         stop_model(model_arn)
 
 

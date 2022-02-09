@@ -18,7 +18,7 @@ def mark_sold(property):
     print(record)
 
     # Update single record now
-    sql_update_query = """Update properties set sold_at = '%s' where external_id = '%s'""" % (
+    sql_update_query = """Update properties set sold_date = '%s' where external_id = '%s'""" % (
         property['sold_date'], property['property_id'])
     cursor.execute(sql_update_query,
                    (property['sold_date'], property['property_id']))

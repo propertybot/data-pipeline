@@ -19,6 +19,7 @@ def lambda_handler(event, context):
     start_model('general')
     start_model('room')
     start_model('bathroom')
+    start_model('exterior')
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')

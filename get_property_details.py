@@ -357,14 +357,13 @@ def analyze_image(bucket, photo):
     if room == 'Kitchen':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-01-03T10.07.41/1641233261997'
     elif room in GENERAL_ROOMS:
-        return {}
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/general-room-labeling/version/general-room-labeling.2022-01-07T17.10.57/1641604257980'
+        model = 'arn:aws:rekognition:us-east-2:735074111034:project/general-labeling/version/general-labeling.2022-02-08T15.00.43/1644361243238'
     elif room == 'Bathroom':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labeling/version/bathroom-labeling.2021-12-22T10.29.21/1640197758406'
     elif room == 'Front Yard':
-        return {}
+        model = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
     elif room == 'Back yard':
-        return {}
+        model = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
     else:
         return {}
     bucket = bucket
@@ -494,9 +493,9 @@ def send_property(property):
 def handle_property(property):
     fetched_item = properties_table.get_item(
         Key={'property_id': property['property_id']})
-    # if 'Item' in fetched_item:
-    #     print("Property already in dynamo")
-    #     return
+    if 'Item' in fetched_item:
+        print("Property already in dynamo")
+        return
     listings_dict = create_listing_dict(properties=[property])
     print("INFO: extracting images from listings...")
     listings_dict, image_url_dict = extract_images_from_listings(
@@ -508,9 +507,9 @@ def handle_property(property):
     print("Done...")
 
     print("INFO: creating labels from images...")
-    # listings_dict = ai_on_images(
-    #     image_url_dict=image_url_dict, listings_dict=listings_dict)
-    # print("Done...")
+    listings_dict = ai_on_images(
+        image_url_dict=image_url_dict, listings_dict=listings_dict)
+    print("Done...")
 
     print("INFO: saving enriched JSON to DynamoDB table...")
     saving_data_to_dynamoDB(listings_dict=listings_dict)
