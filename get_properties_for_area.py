@@ -5,7 +5,7 @@ import json
 dynamodb = boto3.resource('dynamodb')
 sqs = boto3.client('sqs')
 
-properties_table = dynamodb.Table('properties_enriched')
+properties_table = dynamodb.Table('properties')
 queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/new-listings'
 
 

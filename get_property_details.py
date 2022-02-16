@@ -12,7 +12,7 @@ CURRENT_YEAR = 2022
 # Helper class to convert a DynamoDB item to JSON.
 
 dynamodb = boto3.resource('dynamodb')
-properties_table = dynamodb.Table('properties_enriched')
+properties_table = dynamodb.Table('properties')
 BUCKET = "propertybot-v3"
 PREFIX = "data/raw/listings/"
 
@@ -324,8 +324,8 @@ def attach_metadata(listings_dict):
 
 # ### Start Computer Vision Model
 
-def show_custom_labels(model, bucket, photo, min_confidence):
-    client = boto3.client('rekognition')
+def show_custom_labels(model, bucket, photo, min_confidence, region_name):
+    client = boto3.client('rekognition', region_name=region_name)
 
     # Call DetectCustomLabels
     response = client.detect_custom_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
@@ -343,7 +343,8 @@ def determine_room(bucket, photo):
     photo = photo
     model = 'arn:aws:rekognition:us-east-1:735074111034:project/PropertyBot-v3-room-rekognition/version/PropertyBot-v3-room-rekognition.2021-09-04T22.57.53/1630821474130'
     min_confidence = 20
-    labels = show_custom_labels(model, bucket, photo, min_confidence)
+    labels = show_custom_labels(
+        model, bucket, photo, min_confidence, region_name='us-east-1')
     label = next(iter(labels or []), None)
     if label:
         return label['Name']
@@ -354,22 +355,27 @@ def determine_room(bucket, photo):
 def analyze_image(bucket, photo):
     room = determine_room(bucket, photo)
     GENERAL_ROOMS = ['Bedroom', 'Living Room']
+    region_name = 'us-east-1'
     if room == 'Kitchen':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-01-03T10.07.41/1641233261997'
     elif room in GENERAL_ROOMS:
+        region_name = 'us-east-1'
         model = 'arn:aws:rekognition:us-east-2:735074111034:project/general-labeling/version/general-labeling.2022-02-08T15.00.43/1644361243238'
     elif room == 'Bathroom':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labeling/version/bathroom-labeling.2021-12-22T10.29.21/1640197758406'
     elif room == 'Front Yard':
+        region_name = 'us-east-1'
         model = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
     elif room == 'Back yard':
+        region_name = 'us-east-1'
         model = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
     else:
         return {}
     bucket = bucket
     photo = photo
     min_confidence = 20
-    labels = show_custom_labels(model, bucket, photo, min_confidence)
+    labels = show_custom_labels(
+        model, bucket, photo, min_confidence, region_name)
     aggregation = {}
 
     aggregation[room] = labels
@@ -457,7 +463,7 @@ def put_property(record, dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource('dynamodb')
 
-    table = dynamodb.Table('properties_enriched')
+    table = dynamodb.Table('properties')
     response = table.put_item(
         Item=record
     )
@@ -523,3 +529,9 @@ def lambda_handler(event, context):
     for record in event['Records']:
         property = json.loads(record["body"])
         handle_property(property)
+
+
+property_details = {"property_id": "M1876548106", "listing_id": "2939807228", "products": ["core.agent", "core.broker", "co_broke"], "rdc_web_url": "https://www.realtor.com/realestateandhomes-detail/423-S-Mansfield-Ave_Los-Angeles_CA_90036_M18765-48106", "prop_type": "single_family", "address": {"city": "Los Angeles", "line": "423 S Mansfield Ave", "postal_code": "90036", "state_code": "CA", "state": "California", "county": "Los Angeles", "fips_code": "06037", "county_needed_for_uniq": False, "lat": 34.06618, "lon": -118.341086, "neighborhood_name": "Greater Wilshire"}, "branding": {"listing_office": {"list_item": {"name": "Keller Williams Larchmont", "photo": None, "phone": None, "slogan": None, "show_realtor_logo": False, "link": None, "accent_color": None}}}, "prop_status": "for_sale", "price": 3750000, "baths_half": 1, "baths_full": 4, "baths": 5, "beds": 5, "building_size": {"size": 4674, "units": "sqft"}, "agents": [{"primary": True, "advertiser_id": "1890312", "id": "1890312", "photo": {"href": "https://ap.rdcpix.com/876658945/26abbec1dd9e0ba29d9da20f19170155a-e0od-r7_w110.jpg"}, "name": "Peter Oh Real Estate Group"}], "office": {"id": "3e32d836c187a09f1a3199e96ab330a6", "name": "Keller Williams Larchmont"}, "last_update": "2022-02-03T18:32:46Z", "client_display_flags": {"presentation_status": "for_sale", "is_showcase": False, "lead_form_phone_required": True, "price_change": 0, "is_co_broke_email": True, "has_open_house": False, "is_co_broke_phone": False, "is_new_listing": True, "is_new_plan": False, "is_turbo": False, "is_office_standard_listing": False,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "suppress_map_pin": False, "show_contact_a_lender_in_lead_form": False, "show_veterans_united_in_lead_form": False, "flip_the_market_enabled": True, "is_showcase_choice_enabled": False}, "lead_forms": {"form": {"name": {"required": True, "minimum_character_count": 1}, "email": {"required": True, "minimum_character_count": 5}, "phone": {"required": True, "minimum_character_count": 10, "maximum_character_count": 11}, "message": {"required": False, "minimum_character_count": 0}, "show": True}, "show_agent": False, "show_broker": False, "show_builder": False, "show_contact_a_lender": False, "show_veterans_united": False, "form_type": "classic", "lead_type": "co_broke", "is_lcm_enabled": False, "flip_the_market_enabled": True, "local_phone": "(323)366-4648", "local_phones": {"comm_console_mweb": "(323)366-4648"}, "show_text_leads": True, "cashback_enabled": True, "smarthome_enabled": False}, "photo_count": 33, "thumbnail": "https://ap.rdcpix.com/5d32c9759f42c62778ba89df94ab4194l-m2441343930x.jpg", "page_no": 6, "rank": 29, "list_tracking": "type|property|data|prop_id|1876548106|list_id|2939807228|page|rank|list_branding|listing_agent|listing_office|advertiser_id|agent|office|broker|property_status|product_code|advantage_code^6|T|0|1|14IKO|2ERZP|2ERZN|35T|G|5^^$0|1|2|$3|4|5|6|7|J|8|K|9|$A|L|B|M]|C|$D|N|E|O|F|P]|G|Q|H|R|I|S]]", "lot_size": {"size": 6752, "units": "sqft"}, "mls": {"name": "CLAW", "id": "22-121423", "plan_id": None, "abbreviation": "WECA", "type": "mls"}, "data_source_name": "mls", "area_identifier": ["Los Angeles", "CA"]}
+
+handle_property(property_details)
