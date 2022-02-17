@@ -493,7 +493,7 @@ def saving_data_to_dynamoDB(listings_dict):
 # In[15]:
 def send_property(property):
     sqs.send_message(
-        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties',
+        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties_test',
         DelaySeconds=10,
         MessageBody=(json.dumps(property))
     )
@@ -532,3 +532,4 @@ def lambda_handler(event, context):
     for record in event['Records']:
         property = json.loads(record["body"])
         handle_property(property)
+        print("Property is completed")
