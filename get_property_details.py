@@ -415,6 +415,7 @@ def ai_on_images(image_url_dict, listings_dict):
     counter = 0
     for k, v in tqdm(image_url_dict.items()):
         aggregated_labels = {}
+        all_labels = []
         for url in v:
             temp_labels = []
             prefix = url.replace("s3://propertybot-v3/", "")
@@ -423,10 +424,12 @@ def ai_on_images(image_url_dict, listings_dict):
             room = next(iter(labels.keys() or []), None)
             if room == None:
                 continue
+            all_labels.push(labels)
             if room not in aggregated_labels:
                 sentiment = {}
             else:
                 sentiment = aggregated_labels[room]
+
             for v in labels[room]:
                 strippedName = v['Name'].replace(room, '')
                 baseLabel = get_base_label(strippedName)
@@ -456,6 +459,7 @@ def ai_on_images(image_url_dict, listings_dict):
 
         listings_dict[k]['labeled_photos'] = big_dict
         listings_dict[k]['aggregated_labels'] = aggregated_labels
+        listings_dict[k]['all_labels'] = all_labels
     return listings_dict
 
 
