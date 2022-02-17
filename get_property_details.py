@@ -506,9 +506,9 @@ def send_property(property):
 def handle_property(property):
     fetched_item = properties_table.get_item(
         Key={'property_id': property['property_id']})
-    # if 'Item' in fetched_item:
-    #     print("Property already in dynamo")
-    #     return
+    if 'Item' in fetched_item:
+        print("Property already in dynamo")
+        return
     listings_dict = create_listing_dict(properties=[property])
     print("INFO: extracting images from listings...")
     listings_dict, image_url_dict = extract_images_from_listings(
