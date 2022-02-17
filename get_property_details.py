@@ -357,18 +357,18 @@ def analyze_image(bucket, photo):
     GENERAL_ROOMS = ['Bedroom', 'Living Room']
     region_name = 'us-east-1'
     if room == 'Kitchen':
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-01-03T10.07.41/1641233261997'
+        model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-02-11T14.16.28/1644617789083'
     elif room in GENERAL_ROOMS:
         region_name = 'us-east-1'
-        model = 'arn:aws:rekognition:us-east-2:735074111034:project/general-labeling/version/general-labeling.2022-02-08T15.00.43/1644361243238'
+        model = 'arn:aws:rekognition:us-east-1:735074111034:project/general-labeling-full/version/general-labeling-full.2022-02-16T10.57.45/1645037865178'
     elif room == 'Bathroom':
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labeling/version/bathroom-labeling.2021-12-22T10.29.21/1640197758406'
+        model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labeling/version/bathroom-labeling.2022-02-11T14.24.45/1644618286005'
     elif room == 'Front Yard':
         region_name = 'us-east-1'
-        model = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
+        model = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
     elif room == 'Back yard':
         region_name = 'us-east-1'
-        model = 'arn:aws:rekognition:us-east-2:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
+        model = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
     else:
         return {}
     bucket = bucket
