@@ -506,9 +506,9 @@ def send_property(property):
 def handle_property(property):
     fetched_item = properties_table.get_item(
         Key={'property_id': property['property_id']})
-    if 'Item' in fetched_item:
-        print("Property already in dynamo")
-        return
+    # if 'Item' in fetched_item:
+    #     print("Property already in dynamo")
+    #     return
     listings_dict = create_listing_dict(properties=[property])
     print("INFO: extracting images from listings...")
     listings_dict, image_url_dict = extract_images_from_listings(
@@ -527,7 +527,6 @@ def handle_property(property):
     print("INFO: saving enriched JSON to DynamoDB table...")
     saving_data_to_dynamoDB(listings_dict=listings_dict)
     print("Done...")
-    return None
 
 
 # In[ ]:
@@ -545,3 +544,4 @@ def lambda_handler(event, context):
             raise Exception('fucking it up in here')
 
         print("Property is completed")
+    return
