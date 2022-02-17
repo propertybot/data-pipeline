@@ -424,7 +424,7 @@ def ai_on_images(image_url_dict, listings_dict):
             room = next(iter(labels.keys() or []), None)
             if room == None:
                 continue
-            all_labels.push(labels)
+            all_labels.append(labels)
             if room not in aggregated_labels:
                 sentiment = {}
             else:
