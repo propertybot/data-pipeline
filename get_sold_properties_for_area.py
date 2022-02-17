@@ -42,6 +42,7 @@ def write_updated_property_to_dynamo(record):
 
 def run_areas():
     areas = [['Los Angeles', 'CA']]
+    messages = 0
     for area in areas:
         pull_more_properties = True
         offset = 200
@@ -65,15 +66,15 @@ def run_areas():
         for property in properties:
             property['area_identifier'] = areas[0]
             property['sold_date'] = property['last_update']
+            messages += 1
             send_property_to_queue(property)
+
+    return messages
 
 
 def lambda_handler(event, context):
-    run_areas()
+    messages = run_areas()
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
+        'body': json.dumps('Enqueued ' + str(messages) + ' messages on: ' + queue_url)
     }
-
-
-lambda_handler('event', 'context')

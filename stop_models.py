@@ -21,5 +21,5 @@ def lambda_handler(event, context):
     stop_model('bathroom')
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
+        'body': json.dumps('Stopped all models!')
     }

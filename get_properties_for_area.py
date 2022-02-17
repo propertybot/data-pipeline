@@ -34,6 +34,7 @@ def get_listing(city, state_code, offset):
 
 def run_areas():
     areas = [['Los Angeles', 'CA']]
+    messages = 0
     for area in areas:
         pull_more_properties = True
         offset = 200
@@ -52,12 +53,14 @@ def run_areas():
             offset += 200
         for property in properties:
             property['area_identifier'] = areas[0]
+            messages += 1
             send_property_to_queue(property)
+    return messages
 
 
 def lambda_handler(event, context):
-    run_areas()
+    messages = run_areas()
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
+        'body': json.dumps('Enqueued ' + str(messages) + ' messages on: ' + queue_url)
     }

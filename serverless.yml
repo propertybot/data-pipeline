@@ -79,8 +79,8 @@ functions:
     timeout: 900 # seconds
     memorySize: 128 # mb
     # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO!
-    # events:
-    #   - sqs: arn:aws:sqs:us-east-1:735074111034:new-listings-stage
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:new-listings-stage
     package:
       patterns:
         - "!node_modules/**"
