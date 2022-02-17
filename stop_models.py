@@ -19,6 +19,7 @@ def lambda_handler(event, context):
     stop_model('general')
     stop_model('room')
     stop_model('bathroom')
+    stop_model('exterior')
     return {
         'statusCode': 200,
         'body': json.dumps('Stopped all models!')

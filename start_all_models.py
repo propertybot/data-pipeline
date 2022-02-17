@@ -20,6 +20,7 @@ def lambda_handler(event, context):
     start_model('room')
     start_model('bathroom')
     start_model('exterior')
+    start_model('all')
     return {
         'statusCode': 200,
         'body': json.dumps('Started all models')

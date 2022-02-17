@@ -1,6 +1,9 @@
 import json
 import boto3
 
+sqs = boto3.client('sqs')
+queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/property-for-area-trigger'
+
 
 def start_model(project_arn, model_arn, version_name, min_inference_units):
     print('Attempting to start: ', version_name)
@@ -49,11 +52,25 @@ def main_start_model(room):
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
         version_name = 'exterior-labeling.2022-02-11T13.57.21'
         start_model(project_arn, model_arn, version_name, min_inference_units)
+    elif room == 'all':
+        main_start_model('kitchen')
+        main_start_model('general')
+        main_start_model('room')
+        main_start_model('bathroom')
+        main_start_model('exterior')
     else:
         project_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/general-labeling-full/1645029203985'
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/general-labeling-full/version/general-labeling-full.2022-02-16T10.57.45/1645037865178'
         version_name = 'general-labeling-full.2022-02-16T10.57.45'
         start_model(project_arn, model_arn, version_name, min_inference_units)
+
+
+def kick_off_get_properties_for_area(room):
+    sqs.send_message(
+        QueueUrl=queue_url,
+        DelaySeconds=10,
+        MessageBody=(json.dumps({"room": room, "type": "stop"}))
+    )
 
 
 def stop_model(model_arn):
