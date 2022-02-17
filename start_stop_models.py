@@ -103,7 +103,7 @@ def main_stop_model(room):
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-02-11T14.16.28/1644617789083'
         stop_model(model_arn)
     elif room == 'exterior':
-        model_arn = 'arn: aws: rekognition: us-east-2: 735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-03T22.48.55/1643957335334'
+        model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
         stop_model(model_arn)
     else:
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/general-labeling-full/version/general-labeling-full.2022-02-16T10.57.45/1645037865178'
