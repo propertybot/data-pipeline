@@ -535,5 +535,13 @@ def handle_property(property):
 def lambda_handler(event, context):
     for record in event['Records']:
         property = json.loads(record["body"])
-        handle_property(property)
+        try:
+            handle_property(property)
+
+        except Exception as inst:
+            print("FUCKKKKKK")
+
+            print(inst)
+            raise Exception('fucking it up in here')
+
         print("Property is completed")
