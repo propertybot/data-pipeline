@@ -78,6 +78,7 @@ functions:
     description: Get details and enrich a specific property.
     timeout: 900 # seconds
     memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO!
     # events:
     #   - sqs: arn:aws:sqs:us-east-1:735074111034:new-listings-stage

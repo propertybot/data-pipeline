@@ -481,7 +481,10 @@ def saving_data_to_dynamoDB(listings_dict):
         # had to parse float decimal because files could not be saved to DynamoDB
         ddb_data = json.loads(json.dumps(payload), parse_float=decimal.Decimal)
         put_property(record=ddb_data)
+        print("INFO: PUT PROPERTY data for property_id: {0}".format(k))
+
         send_property(payload)
+        print("INFO: SENT PROPERTY for property_id: {0}".format(k))
     return None
 
 
