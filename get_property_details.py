@@ -459,7 +459,7 @@ def ai_on_images(image_url_dict, listings_dict):
 
         listings_dict[k]['labeled_photos'] = big_dict
         listings_dict[k]['aggregated_labels'] = aggregated_labels
-        listings_dict[k]['all_labels'] = all_labels
+        # listings_dict[k]['all_labels'] = all_labels
     return listings_dict
 
 
