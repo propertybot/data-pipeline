@@ -38,7 +38,7 @@ def determine_room(bucket, photo):
     bucket = bucket
     photo = photo
     model = 'arn:aws:rekognition:us-east-1:735074111034:project/PropertyBot-v3-room-rekognition/version/PropertyBot-v3-room-rekognition.2021-09-04T22.57.53/1630821474130'
-    min_confidence = 20
+    min_confidence = 80
     labels = show_custom_labels(
         model, bucket, photo, min_confidence, region_name='us-east-1')
     label = next(iter(labels or []), None)
