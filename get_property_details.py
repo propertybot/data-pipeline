@@ -305,21 +305,24 @@ def extract_images_from_listings(listings_dict):
             # downloading images from urls and creating a list of urls in s3 where data are to be stored
             counter = 0
             for url in urls:
+                print("A")
                 response = requests.get(url['url'], stream=True)
-                s3url = "s3://propertybot-v3/data/raw/images/{0}_{1}.png".format(
-                    key, counter)
-                with open(s3url, 'wb') as fout:
-                    fout.write(response.content)
                 s3_url = "s3://propertybot-v3/data/raw/images/{0}_{1}.png".format(
                     key, counter)
+                print('B"')
+                with open(s3_url, 'wb') as fout:
+                    fout.write(response.content)
                 s3_urls.append(s3_url)
+                print("C")
+                print(s3_url)
                 s3_public_urls.append(
                     "https://propertybot-v3.s3.amazonaws.com/data/raw/images/{0}_{1}.png".format(key, counter))
-                send_image_for_specific_labeling(s3_url, room)
+                print("D")
+                send_image_for_specific_labeling(s3_url, url['room'])
+                print("E")
                 counter = counter + 1
             image_url_dict[key] = s3_urls
             image_public_url_dict[key] = s3_public_urls
-            rooms[key] = urls['room']
 
         except BaseException as err:
             print("No photo data")
