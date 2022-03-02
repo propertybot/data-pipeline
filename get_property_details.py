@@ -269,7 +269,7 @@ def extract_images_from_listings(listings_dict):
     image_public_url_dict = {}
     s3_urls = []
     s3_public_urls = []
-    urls = [{}]
+    urls = []
     rooms = []
 
     for key, value in tqdm(listings_dict.items()):
@@ -293,40 +293,29 @@ def extract_images_from_listings(listings_dict):
                 room = None
                 if tags:
                     max_prob = max((tag['probability'] for tag in tags) or [])
-                    print("MAX PROB")
-                    print(max_prob)
                     if max_prob and max_prob > 0.8:
                         room = [tag['label']
                                 for tag in tags if tag['probability'] == max_prob][0]
-                        print("VALID MAX PROB")
-                        print(room)
                 urls.append({"url": item['href'], "room": room})
 
             # downloading images from urls and creating a list of urls in s3 where data are to be stored
             counter = 0
             for url in urls:
-                print("A")
                 response = requests.get(url['url'], stream=True)
                 s3_url = "s3://propertybot-v3/data/raw/images/{0}_{1}.png".format(
                     key, counter)
-                print('B"')
                 with open(s3_url, 'wb') as fout:
                     fout.write(response.content)
                 s3_urls.append(s3_url)
-                print("C")
-                print(s3_url)
                 s3_public_urls.append(
                     "https://propertybot-v3.s3.amazonaws.com/data/raw/images/{0}_{1}.png".format(key, counter))
-                print("D")
                 send_image_for_specific_labeling(s3_url, url['room'])
-                print("E")
                 counter = counter + 1
             image_url_dict[key] = s3_urls
             image_public_url_dict[key] = s3_public_urls
 
         except BaseException as err:
-            print("No photo data")
-            print(err)
+            print("No photo data" + err)
             image_url_dict[key] = s3_urls
 
     for k, v in tqdm(listings_dict.items()):
@@ -340,8 +329,7 @@ def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
     GENERAL_ROOMS = ['living_room', 'dining_room']
     photo = s3_url.replace("s3://propertybot-v3/", "")
-    print("SENDING")
-    print(s3_url, room)
+
     if room == None:
         mark_image_as_unknown_room(photo)
         return
