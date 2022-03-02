@@ -293,7 +293,7 @@ def extract_images_from_listings(listings_dict):
                 room = None
                 if tags:
                     max_prob = max((tag['probability'] for tag in tags) or [])
-                    if max_prob:
+                    if max_prob and max_prob > 0.8:
                         room = [tag['label']
                                 for tag in tags if tag['probability'] == max_prob][0]
                 urls.append({"url": item['href'], "room": room})
