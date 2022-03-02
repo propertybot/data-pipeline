@@ -315,7 +315,8 @@ def extract_images_from_listings(listings_dict):
             image_public_url_dict[key] = s3_public_urls
 
         except BaseException as err:
-            print("No photo data" + err)
+            print("No photo data")
+            print(err)
             image_url_dict[key] = s3_urls
 
     for k, v in tqdm(listings_dict.items()):
