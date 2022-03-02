@@ -48,14 +48,15 @@ def determine_room_to_label(url):
     photo = url.replace("s3://propertybot-v3/", "")
     bucket = "propertybot-v3"
     label = determine_room(bucket, photo)
+    GENERAL_ROOMS = ['Bedroom', 'Living Room', 'Dining Room', 'Living Room']
+    EXTERIOR = ['Front Yard', 'Back yard']
     room = None
     if label:
         if label['Name'] in EXTERIOR and label['Confidence'] > 95:
             room = None
         else:
             room = label['Name']
-    GENERAL_ROOMS = ['Bedroom', 'Living Room', 'Dining Room', 'Living Room']
-    EXTERIOR = ['Front Yard', 'Back yard']
+
     if room == None:
         mark_image_as_unknown_room(photo)
         return
