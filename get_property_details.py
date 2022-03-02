@@ -269,7 +269,8 @@ def extract_images_from_listings(listings_dict):
     image_public_url_dict = {}
     s3_urls = []
     s3_public_urls = []
-    urls = []
+    urls = [{}]
+    rooms = []
 
     for key, value in tqdm(listings_dict.items()):
 
@@ -284,23 +285,37 @@ def extract_images_from_listings(listings_dict):
 
             # creating a list of urls for external images
             for item in photo_data:
-                urls.append(item['href'])
+
+                ALLOWED_ROOMS = ['exterior', 'living_room',
+                                 'dining_room', 'kitchen', 'bedroom', 'bathroom']
+                tags = [tag for tag in item['tags']
+                        if tag['label'] in ALLOWED_ROOMS]
+                room = None
+                if tags:
+                    max_prob = max((tag['probability'] for tag in tags) or [])
+                    if max_prob:
+                        room = [tag['label']
+                                for tag in tags if tag['probability'] == max_prob][0]
+                urls.append({"url": item['href'], "room": room})
 
             # downloading images from urls and creating a list of urls in s3 where data are to be stored
             counter = 0
             for url in urls:
-                response = requests.get(url, stream=True)
+                response = requests.get(url['url'], stream=True)
                 s3url = "s3://propertybot-v3/data/raw/images/{0}_{1}.png".format(
                     key, counter)
                 with open(s3url, 'wb') as fout:
                     fout.write(response.content)
-                s3_urls.append(
-                    "s3://propertybot-v3/data/raw/images/{0}_{1}.png".format(key, counter))
+                s3_url = "s3://propertybot-v3/data/raw/images/{0}_{1}.png".format(
+                    key, counter)
+                s3_urls.append(s3_url)
                 s3_public_urls.append(
                     "https://propertybot-v3.s3.amazonaws.com/data/raw/images/{0}_{1}.png".format(key, counter))
+                send_image_for_specific_labeling(s3_url, room)
                 counter = counter + 1
             image_url_dict[key] = s3_urls
             image_public_url_dict[key] = s3_public_urls
+            rooms[key] = urls['room']
 
         except BaseException as err:
             print("No photo data")
@@ -314,91 +329,47 @@ def extract_images_from_listings(listings_dict):
     return listings_dict, image_url_dict
 
 
+def send_image_for_specific_labeling(s3_url, room):
+    sqs = boto3.client('sqs')
+    GENERAL_ROOMS = ['living_room', 'dining_room']
+    photo = s3_url.replace("s3://propertybot-v3/", "")
+    if room == None:
+        mark_image_as_unknown_room(photo)
+        return
+    elif room == 'kitchen':
+        queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
+    elif room in GENERAL_ROOMS:
+        room = 'general'
+        queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/general-room-queue'
+    elif room == 'bathroom':
+        queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/bathroom-labeler-queue'
+    elif room in 'exterior':
+        queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/exterior-labeler-queue'
+    else:
+        mark_image_as_unknown_room(photo)
+        return
+    sqs.send_message(
+        QueueUrl=queue_url,
+        DelaySeconds=10,
+        MessageBody=(json.dumps({"photo": photo, "room": room}))
+    )
+
+
+def mark_image_as_unknown_room(image_id):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('analyzed_images')
+    response = table.put_item(
+        Item={"id": image_id, "labels": {}}
+    )
+    return response
+
+
 def attach_metadata(listings_dict):
     for k, v in listings_dict.items():
         listings_dict[k]['description_metadata'] = fetch_description_metadata(
             v)
 
     return listings_dict
-
-
-# ### Start Computer Vision Model
-
-def show_custom_labels(model, bucket, photo, min_confidence, region_name):
-    client = boto3.client('rekognition', region_name=region_name)
-
-    # Call DetectCustomLabels
-    response = client.detect_custom_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
-                                           MinConfidence=min_confidence,
-                                           ProjectVersionArn=model)
-
-    # For object detection use case, uncomment below code to display image.
-    # display_image(bucket,photo,response)
-
-    return response['CustomLabels']
-
-
-def determine_room(bucket, photo):
-    bucket = bucket
-    photo = photo
-    model = 'arn:aws:rekognition:us-east-1:735074111034:project/PropertyBot-v3-room-rekognition/version/PropertyBot-v3-room-rekognition.2021-09-04T22.57.53/1630821474130'
-    min_confidence = 20
-    labels = show_custom_labels(
-        model, bucket, photo, min_confidence, region_name='us-east-1')
-    label = next(iter(labels or []), None)
-    if label:
-        return label['Name']
-    else:
-        return None
-
-
-def analyze_image(bucket, photo):
-    room = determine_room(bucket, photo)
-    GENERAL_ROOMS = ['Bedroom', 'Living Room']
-    region_name = 'us-east-1'
-    if room == 'Kitchen':
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-02-11T14.16.28/1644617789083'
-    elif room in GENERAL_ROOMS:
-        region_name = 'us-east-1'
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/general-labeling-full/version/general-labeling-full.2022-02-16T10.57.45/1645037865178'
-    elif room == 'Bathroom':
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labeling/version/bathroom-labeling.2022-02-11T14.24.45/1644618286005'
-    elif room == 'Front Yard':
-        region_name = 'us-east-1'
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
-    elif room == 'Back yard':
-        region_name = 'us-east-1'
-        model = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
-    else:
-        return {}
-    bucket = bucket
-    photo = photo
-    min_confidence = 20
-    labels = show_custom_labels(
-        model, bucket, photo, min_confidence, region_name)
-    aggregation = {}
-
-    aggregation[room] = labels
-    return aggregation
-
-
-# ## Running the Computer Vision Model on ALL of the images/properties
-
-# In[12]:
-
-
-def ai_on_images(image_url_dict, listings_dict):
-    for k, v in tqdm(image_url_dict.items()):
-        for url in v:
-            send_image_for_labeling(url)
-
-
-def send_image_for_labeling(url):
-    sqs.send_message(
-        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/room-labeler-queue',
-        DelaySeconds=10,
-        MessageBody=(json.dumps({"url": url}))
-    )
 
 
 def send_property_for_labeling_aggregation(image_url_dict, listings_dict):
@@ -417,18 +388,14 @@ def handle_property(property):
         print("Property already in dynamo")
         return
     listings_dict = create_listing_dict(properties=[property])
-    print("INFO: extracting images from listings...")
-    listings_dict, image_url_dict = extract_images_from_listings(
-        listings_dict)
-    print("Done...")
 
     print("INFO: using NLP to extract metadata from listings...")
     listings_dict = attach_metadata(listings_dict)
     print("Done...")
 
-    print("INFO: creating labels from images...")
-    listings_dict = ai_on_images(
-        image_url_dict=image_url_dict, listings_dict=listings_dict)
+    print("INFO: extracting images from listings...")
+    listings_dict, image_url_dict = extract_images_from_listings(
+        listings_dict)
     print("Done...")
 
     print("INFO: sending property for labeling aggregation...")
