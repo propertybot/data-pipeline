@@ -61,7 +61,7 @@ def determine_room_to_label(url):
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
     elif room in GENERAL_ROOMS:
         room = 'general'
-        queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/general-labeler-queue'
+        queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/general-room-queue'
     elif room == 'Bathroom':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/bathroom-labeler-queue'
     elif room in EXTERIOR:
