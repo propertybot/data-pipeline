@@ -293,9 +293,13 @@ def extract_images_from_listings(listings_dict):
                 room = None
                 if tags:
                     max_prob = max((tag['probability'] for tag in tags) or [])
+                    print("MAX PROB")
+                    print(max_prob)
                     if max_prob and max_prob > 0.8:
                         room = [tag['label']
                                 for tag in tags if tag['probability'] == max_prob][0]
+                        print("VALID MAX PROB")
+                        print(room)
                 urls.append({"url": item['href'], "room": room})
 
             # downloading images from urls and creating a list of urls in s3 where data are to be stored
@@ -333,6 +337,8 @@ def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
     GENERAL_ROOMS = ['living_room', 'dining_room']
     photo = s3_url.replace("s3://propertybot-v3/", "")
+    print("SENDING")
+    print(s3_url, room)
     if room == None:
         mark_image_as_unknown_room(photo)
         return
@@ -382,11 +388,11 @@ def send_property_for_labeling_aggregation(image_url_dict, listings_dict):
 
 
 def handle_property(property):
-    fetched_item = properties_table.get_item(
-        Key={'property_id': property['property_id']})
-    if 'Item' in fetched_item:
-        print("Property already in dynamo")
-        return
+    # fetched_item = properties_table.get_item(
+    #     Key={'property_id': property['property_id']})
+    # if 'Item' in fetched_item:
+    #     print("Property already in dynamo")
+    #     return
     listings_dict = create_listing_dict(properties=[property])
 
     print("INFO: using NLP to extract metadata from listings...")
