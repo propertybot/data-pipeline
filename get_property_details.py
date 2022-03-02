@@ -386,120 +386,27 @@ def analyze_image(bucket, photo):
 
 # In[12]:
 
-def get_base_label(label):
-    words_to_strip = ['neutral', 'ugly', 'new', 'nice', 'old', 'dark']
-    for word in words_to_strip:
-        label = label.replace(word, '')
-    if 'light-fix' not in label:
-        label = label.replace('light', '')
-    return label.replace('--', '')
-
-
-def get_setiment(label, confidence):
-    negative_identifers = ['old', 'ugly']
-    positive_identifers = ['nice', 'neutral', 'new']
-    for identifier in negative_identifers:
-        if identifier in label:
-            return -1 * confidence
-
-    for identifier in positive_identifers:
-        if identifier in label:
-            return confidence
-
-    return 0
-
 
 def ai_on_images(image_url_dict, listings_dict):
-    tagged_image_dict = {}
-
-    counter = 0
     for k, v in tqdm(image_url_dict.items()):
-        aggregated_labels = {}
-        all_labels = []
         for url in v:
-            temp_labels = []
-            prefix = url.replace("s3://propertybot-v3/", "")
-            labels = analyze_image(
-                bucket="propertybot-v3", photo=prefix)
-            room = next(iter(labels.keys() or []), None)
-            if room == None:
-                continue
-            all_labels.append(labels)
-            if room not in aggregated_labels:
-                sentiment = {}
-            else:
-                sentiment = aggregated_labels[room]
-
-            for v in labels[room]:
-                strippedName = v['Name'].replace(room, '')
-                baseLabel = get_base_label(strippedName)
-                if baseLabel.startswith('-'):
-                    baseLabel = baseLabel[1:]
-                if baseLabel.endswith('-'):
-                    baseLabel = baseLabel[:-1]
-                if baseLabel not in sentiment:
-                    sentiment[baseLabel] = 0
-                sentiment[baseLabel] += get_setiment(
-                    strippedName, v['Confidence'])
-
-            aggregated_labels[room] = sentiment
-
-            tagged_image_dict[url] = temp_labels
-        print(str(counter) + '/' + str(len(image_url_dict.items())))
-
-    for k, v in listings_dict.items():
-        big_dict = {}
-
-        for url in listings_dict[k]['s3_image_urls']:
-            try:
-                big_dict[url] = tagged_image_dict[url]
-
-            except:  # this should never happeng because all of the urls in the tagged_image_dict come from the listing_dict, so there should always be a match
-                big_dict[url] = None
-
-        listings_dict[k]['labeled_photos'] = big_dict
-        listings_dict[k]['aggregated_labels'] = aggregated_labels
-        # listings_dict[k]['all_labels'] = all_labels
-    return listings_dict
+            send_image_for_labeling(url)
 
 
-def put_property(record, dynamodb=None):
-    if not dynamodb:
-        dynamodb = boto3.resource('dynamodb')
-
-    table = dynamodb.Table('properties')
-    response = table.put_item(
-        Item=record
-    )
-    return response
-
-
-# In[14]:
-def saving_data_to_dynamoDB(listings_dict):
-    for k, v in listings_dict.items():
-        payload = {}
-        payload['property_id'] = k
-        payload['property_info'] = v
-        print("INFO: saving data for property_id: {0}".format(k))
-
-        # had to parse float decimal because files could not be saved to DynamoDB
-        ddb_data = json.loads(json.dumps(payload), parse_float=decimal.Decimal)
-        put_property(record=ddb_data)
-        print("INFO: PUT PROPERTY data for property_id: {0}".format(k))
-
-        send_property(payload)
-        print("INFO: SENT PROPERTY for property_id: {0}".format(k))
-    return None
-
-
-# # Main Function that Does the Ingestion
-
-# In[15]:
-def send_property(property):
+def send_image_for_labeling(url):
     sqs.send_message(
-        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties_test',
+        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/room-labeler-queue',
         DelaySeconds=10,
-        MessageBody=(json.dumps(property))
+        MessageBody=(json.dumps({"url": url}))
+    )
+
+
+def send_property_for_labeling_aggregation(image_url_dict, listings_dict):
+    sqs.send_message(
+        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/labeling-aggreagtion-queue',
+        DelaySeconds=10,
+        MessageBody=(json.dumps(
+            {"image_url_dict": image_url_dict, 'listings_dict': listings_dict}))
     )
 
 
@@ -524,8 +431,8 @@ def handle_property(property):
         image_url_dict=image_url_dict, listings_dict=listings_dict)
     print("Done...")
 
-    print("INFO: saving enriched JSON to DynamoDB table...")
-    saving_data_to_dynamoDB(listings_dict=listings_dict)
+    print("INFO: sending property for labeling aggregation...")
+    send_property_for_labeling_aggregation(image_url_dict, listings_dict)
     print("Done...")
 
 

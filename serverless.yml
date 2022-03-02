@@ -89,6 +89,88 @@ functions:
         - "!package-lock.json"
         - "!package.json"
 
+  # IMAGE LABEL LAMBDAS
+  determineRoom:
+    name: determine_room
+    handler: determine_room.lambda_handler
+    description: Get which room a specific image is showing.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:room-labeler-queue
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  kitchenLabeler:
+    name: kitchen_labeler
+    handler: label_room.lambda_handler
+    description: Determines custom labels on kitchens.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+    # events:
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:kitchen-labeler-queue
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  exteriorLabeler:
+    name: exterior_labeler
+    handler: label_room.lambda_handler
+    description: Determines custom labels on exteriors.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+    # events:
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:exterior-labeler-queue
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  bathroomLabeler:
+    name: bathroom_labeler
+    handler: label_room.lambda_handler
+    description: Determines custom labels on bathrooms.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+    # events:
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:bathroom-labeler-queue
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  generalLabeler:
+    name: general_labeler
+    handler: label_room.lambda_handler
+    description: Determines custom labels on general/generic rooms.
+    timeout: 900 # seconds
+    memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+    # events:
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:general-room-queue
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
+  # SOLD LAMBDAS
   getSoldPropertiesForArea:
     name: get_sold_properties_for_area
     handler: get_sold_properties_for_area.lambda_handler
