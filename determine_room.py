@@ -41,17 +41,19 @@ def determine_room(bucket, photo):
     min_confidence = 80
     labels = show_custom_labels(
         model, bucket, photo, min_confidence, region_name='us-east-1')
-    label = next(iter(labels or []), None)
-    if label:
-        return label['Name']
-    else:
-        return None
+    return next(iter(labels or []), None)
 
 
 def determine_room_to_label(url):
     photo = url.replace("s3://propertybot-v3/", "")
     bucket = "propertybot-v3"
-    room = determine_room(bucket, photo)
+    label = determine_room(bucket, photo)
+    room = None
+    if label:
+        if label['Name'] in EXTERIOR and label['Confidence'] > 95:
+            room = None
+        else:
+            room = label['Name']
     GENERAL_ROOMS = ['Bedroom', 'Living Room', 'Dining Room', 'Living Room']
     EXTERIOR = ['Front Yard', 'Back yard']
     if room == None:
