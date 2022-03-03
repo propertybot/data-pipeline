@@ -37,13 +37,13 @@ def send_image_for_specific_labeling(photo, queue_url, room):
 def analyze_image(room, photo):
     bucket = "propertybot-v3"
     region_name = 'us-east-1'
-    if room == 'Kitchen':
+    if room == 'kitchen':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-02-11T14.16.28/1644617789083'
-    elif room == 'General':
+    elif room == 'general':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/general-labeling-full/version/general-labeling-full.2022-02-16T10.57.45/1645037865178'
-    elif room == 'Bathroom':
+    elif room == 'bathroom':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labeling/version/bathroom-labeling.2022-02-11T14.24.45/1644618286005'
-    elif room == 'Exterior':
+    elif room == 'exterior':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
     min_confidence = 20
     labels = show_custom_labels(

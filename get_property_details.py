@@ -331,7 +331,7 @@ def extract_images_from_listings(listings_dict):
 
 def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
-    GENERAL_ROOMS = ['living_room', 'dining_room']
+    GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     photo = s3_url.replace("s3://propertybot-v3/", "")
 
     if room == None:
