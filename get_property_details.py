@@ -211,7 +211,6 @@ def fetch_description_metadata(item):
             description, percentage_calculations[i], 5.0, 3.0)
         if tag:
             items.append(tag)
-    print("NEW ITEMS", items)
     return items
 
 
@@ -296,6 +295,10 @@ def extract_images_from_listings(listings_dict):
                     if max_prob and max_prob > 0.8:
                         room = [tag['label']
                                 for tag in tags if tag['probability'] == max_prob][0]
+                        print("ROOM")
+                        print(room)
+                        print(max_prob)
+                        print("max_prob")
                 urls.append({"url": item['href'], "room": room})
 
             # downloading images from urls and creating a list of urls in s3 where data are to be stored
