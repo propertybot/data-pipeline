@@ -261,7 +261,19 @@ def create_listing_dict(properties):
     return listings_dict
 
 
+def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
+    ROOM_IDENTIFIERS = ['kitchen', 'bathroom', 'general', 'exterior']
+    for room_identifier in ROOM_IDENTIFIERS:
+        rooms = [
+            element for element in all_images_with_rooms_and_confidence if element['room'] == room_identifier]
+        sorted_rooms = sorted(
+            rooms, key=lambda x: x['confidence'], reverse=True)[0:3]
+        aggregated_rooms = aggregated_rooms + sorted_rooms
+        for room in sorted_rooms:
+            send_image_for_specific_labeling(room['s3_url'], room['room'])
+
 # ## Extracting Images from Listing Dictionary, Downloading Images, Saving to S3, and Recording S3 Location in Listing Dictionary for Computer Vision Model to Work off S3 Data
+
 
 def extract_images_from_listings(listings_dict):
     image_url_dict = {}
@@ -269,7 +281,7 @@ def extract_images_from_listings(listings_dict):
     s3_urls = []
     s3_public_urls = []
     urls = []
-    rooms = []
+    all_images_with_rooms_and_confidence = []
 
     for key, value in tqdm(listings_dict.items()):
 
@@ -295,11 +307,9 @@ def extract_images_from_listings(listings_dict):
                     if max_prob and max_prob > 0.8:
                         room = [tag['label']
                                 for tag in tags if tag['probability'] == max_prob][0]
-                        print("ROOM")
-                        print(room)
-                        print(max_prob)
-                        print("max_prob")
-                urls.append({"url": item['href'], "room": room})
+                        room = map_external_room_label_to_internal(room)
+                urls.append(
+                    {"url": item['href'], "room": room, "confidence": max_prob})
 
             # downloading images from urls and creating a list of urls in s3 where data are to be stored
             counter = 0
@@ -312,11 +322,13 @@ def extract_images_from_listings(listings_dict):
                 s3_urls.append(s3_url)
                 s3_public_urls.append(
                     "https://propertybot-v3.s3.amazonaws.com/data/raw/images/{0}_{1}.png".format(key, counter))
-                send_image_for_specific_labeling(s3_url, url['room'])
+                all_images_with_rooms_and_confidence.append(
+                    {'s3_url': 's3_url', 'confidence': url['confidence'], 'room': 'room'})
+
                 counter = counter + 1
             image_url_dict[key] = s3_urls
             image_public_url_dict[key] = s3_public_urls
-
+            get_top_pictures_for_room(all_images_with_rooms_and_confidence)
         except BaseException as err:
             print("No photo data")
             print(err)
@@ -329,18 +341,28 @@ def extract_images_from_listings(listings_dict):
     return listings_dict, image_url_dict
 
 
+def map_external_room_label_to_internal(room):
+    GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
+    if room == 'kitchen':
+        return 'kitchen'
+    elif room in GENERAL_ROOMS:
+        return 'general'
+    elif room == 'bathroom':
+        return 'bathroom'
+    elif room == 'exterior':
+        room = 'exterior'
+    else:
+        return None
+
+
 def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
     GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     photo = s3_url.replace("s3://propertybot-v3/", "")
 
-    if room == None:
-        mark_image_as_unknown_room(photo)
-        return
-    elif room == 'kitchen':
+    if room == 'kitchen':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
-    elif room in GENERAL_ROOMS:
-        room = 'general'
+    elif room == 'general':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/general-room-queue'
     elif room == 'bathroom':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/bathroom-labeler-queue'
