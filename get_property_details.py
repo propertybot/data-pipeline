@@ -268,7 +268,6 @@ def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
             element for element in all_images_with_rooms_and_confidence if element['room'] == room_identifier]
         sorted_rooms = sorted(
             rooms, key=lambda x: x['confidence'], reverse=True)[0:3]
-        aggregated_rooms = aggregated_rooms + sorted_rooms
         for room in sorted_rooms:
             send_image_for_specific_labeling(room['s3_url'], room['room'])
 
