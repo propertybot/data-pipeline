@@ -355,6 +355,15 @@ def map_external_room_label_to_internal(room):
         return None
 
 
+def mark_image_as_unknown_room(image_id):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('analyzed_images')
+    response = table.put_item(
+        Item={"id": image_id, "labels": {}}
+    )
+    return response
+
+
 def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
     GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
@@ -376,15 +385,6 @@ def send_image_for_specific_labeling(s3_url, room):
         DelaySeconds=10,
         MessageBody=(json.dumps({"photo": photo, "room": room}))
     )
-
-
-def mark_image_as_unknown_room(image_id):
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('analyzed_images')
-    response = table.put_item(
-        Item={"id": image_id, "labels": {}}
-    )
-    return response
 
 
 def attach_metadata(listings_dict):
