@@ -49,7 +49,7 @@ def determine_room_to_label(url):
             room = label['Name']
 
     if room == None:
-        mark_image_as_unknown_room(photo)
+        # mark_image_as_unknown_room(photo)
         return
     elif room == 'Kitchen':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
