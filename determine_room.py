@@ -62,7 +62,7 @@ def determine_room_to_label(url):
         room = 'exterior'
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/exterior-labeler-queue'
     else:
-        mark_image_as_unknown_room(photo)
+        # mark_image_as_unknown_room(photo)
         return
 
     send_image_for_specific_labeling(photo, queue_url, room)
