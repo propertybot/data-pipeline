@@ -75,7 +75,7 @@ def ai_on_images(image_url_dict, listings_dict):
             prefix = url.replace("s3://propertybot-v3/", "")
 
             fetched_item = analyzed_images_table.get_item(
-                Key={'image_id': prefix})
+                Key={'id': prefix})
             if 'Item' in fetched_item:
                 print("Image not already in dynamo")
                 raise Exception('Image not already in dynamo')
