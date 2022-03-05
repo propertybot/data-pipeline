@@ -21,7 +21,7 @@ def save_labels(image_id, labels):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('analyzed_images')
     ddb_data = json.loads(json.dumps(
-        {"id": image_id, "labels": labels}), parse_float=Decimal)
+        {"id": image_id, "labels": labels}), parse_float=decimal.Decimal)
 
     response = table.put_item(
         Item=ddb_data
