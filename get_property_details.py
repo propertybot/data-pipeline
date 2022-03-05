@@ -343,6 +343,8 @@ def extract_images_from_listings(listings_dict):
 
 
 def map_external_room_label_to_internal(room):
+    print("MAPPING")
+    print(room)
     GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     if room == 'kitchen':
         return 'kitchen'
