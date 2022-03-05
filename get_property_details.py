@@ -373,7 +373,7 @@ def mark_image_as_unknown_room(image_id):
 def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
     photo = s3_url.replace("s3://propertybot-v3/", "")
-    print('s3_url', 'room')
+    print("SENDING")
     print(s3_url, room)
     if room == 'kitchen':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
