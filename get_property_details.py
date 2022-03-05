@@ -324,7 +324,7 @@ def extract_images_from_listings(listings_dict):
                 s3_public_urls.append(
                     "https://propertybot-v3.s3.amazonaws.com/data/raw/images/{0}_{1}.png".format(key, counter))
                 all_images_with_rooms_and_confidence.append(
-                    {'s3_url': 's3_url', 'confidence': url['confidence'], 'room': 'room'})
+                    {'s3_url': s3_url, 'confidence': url['confidence'], 'room': url['room']})
 
                 counter = counter + 1
             image_url_dict[key] = s3_urls
