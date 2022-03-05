@@ -344,8 +344,6 @@ def extract_images_from_listings(listings_dict):
 
 
 def map_external_room_label_to_internal(room):
-    print("MAPPING")
-    print(room)
     GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     if room == 'kitchen':
         return 'kitchen'
@@ -373,8 +371,6 @@ def mark_image_as_unknown_room(image_id):
 def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
     photo = s3_url.replace("s3://propertybot-v3/", "")
-    print("SENDING")
-    print(s3_url, room)
     if room == 'kitchen':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
     elif room == 'general':
@@ -442,9 +438,6 @@ def lambda_handler(event, context):
 
         except Exception as inst:
             print("FUCKKKKKK")
-
             print(inst)
             raise Exception('fucking it up in here')
-
-        print("Property is completed")
     return
