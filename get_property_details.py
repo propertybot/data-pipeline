@@ -263,6 +263,8 @@ def create_listing_dict(properties):
 
 def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
     ROOM_IDENTIFIERS = ['kitchen', 'bathroom', 'general', 'exterior']
+    print("all_images_with_rooms_and_confidence")
+    print(all_images_with_rooms_and_confidence)
     for room_identifier in ROOM_IDENTIFIERS:
         rooms = [
             element for element in all_images_with_rooms_and_confidence if element['room'] == room_identifier]
@@ -365,9 +367,9 @@ def mark_image_as_unknown_room(image_id):
 
 def send_image_for_specific_labeling(s3_url, room):
     sqs = boto3.client('sqs')
-    GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     photo = s3_url.replace("s3://propertybot-v3/", "")
-
+    print('s3_url', 'room')
+    print(s3_url, room)
     if room == 'kitchen':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/kitchen-labeler-queue'
     elif room == 'general':
