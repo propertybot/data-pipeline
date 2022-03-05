@@ -87,7 +87,9 @@ def ai_on_images(image_url_dict, listings_dict):
                 print("Image not already in dynamo")
                 print(prefix)
                 raise Exception('Image not already in dynamo')
-
+            else:
+                print("FETCHED ITEM")
+                print(fetched_item)
             labels = fetched_item['Item']['labels']
             room = next(iter(labels.keys() or []), None)
             if room == None:
