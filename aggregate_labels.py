@@ -66,9 +66,9 @@ def get_setiment(label, confidence):
 def exists(hash_key):
     try:
         item = analyzed_images_table.get_item(Key={'id': hash_key})
+        print("FUCKING GOT IT")
+        print(item)
         item = item['Item']
-    except boto3.dynamodb.exceptions.DynamoDBKeyNotFoundError:
-        item = None
     except:
         item = None
     return item
