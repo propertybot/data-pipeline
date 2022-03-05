@@ -66,6 +66,7 @@ def get_setiment(label, confidence):
 def exists(hash_key):
     try:
         item = analyzed_images_table.get_item(Key={'id': hash_key})
+        item = item['Items']
     except boto3.dynamodb.exceptions.DynamoDBKeyNotFoundError:
         item = None
     return item
@@ -93,7 +94,7 @@ def ai_on_images(image_url_dict, listings_dict):
                 print(fetched_item)
                 print(prefix)
 
-            labels = fetched_item['Item']['labels']
+            labels = fetched_item['labels']
             room = next(iter(labels.keys() or []), None)
             if room == None:
                 continue
