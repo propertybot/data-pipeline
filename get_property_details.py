@@ -380,6 +380,7 @@ def send_image_for_specific_labeling(s3_url, room):
     elif room == 'exterior':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/exterior-labeler-queue'
     else:
+        print("CANT GET room", room)
         mark_image_as_unknown_room(photo)
         return
     sqs.send_message(
