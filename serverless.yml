@@ -155,6 +155,22 @@ functions:
         - "!package-lock.json"
         - "!package.json"
 
+  aggregateLabels:
+    name: label_aggregates
+    handler: aggregate_labels.lambda_handler
+    description: Aggregates all labels for a given property.
+    timeout: 30 # seconds
+    memorySize: 128 # mb
+    reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:labeling-aggreagtion-queue
+    package:
+      patterns:
+        - "!node_modules/**"
+        - "!yarn.lock"
+        - "!package-lock.json"
+        - "!package.json"
+
   # SOLD LAMBDAS
   getSoldPropertiesForArea:
     name: get_sold_properties_for_area
