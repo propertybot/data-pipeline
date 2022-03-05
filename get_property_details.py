@@ -1,3 +1,4 @@
+from lib2to3.pgen2.token import RIGHTSHIFT
 import requests
 import json
 from smart_open import open
@@ -344,6 +345,7 @@ def extract_images_from_listings(listings_dict):
 
 def map_external_room_label_to_internal(room):
     print("MAPPING")
+    print(room)
     GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     if room == 'kitchen':
         return 'kitchen'
@@ -354,6 +356,8 @@ def map_external_room_label_to_internal(room):
     elif room == 'exterior':
         room = 'exterior'
     else:
+        print("not matched")
+        print(room)
         return None
 
 
