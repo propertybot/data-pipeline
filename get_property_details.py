@@ -263,16 +263,22 @@ def create_listing_dict(properties):
 
 
 def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
-    ROOM_IDENTIFIERS = ['kitchen', 'bathroom', 'general', 'exterior']
-    print("all_images_with_rooms_and_confidence")
-    print(all_images_with_rooms_and_confidence)
-    for room_identifier in ROOM_IDENTIFIERS:
-        rooms = [
-            element for element in all_images_with_rooms_and_confidence if element['room'] == room_identifier]
-        sorted_rooms = sorted(
-            rooms, key=lambda x: x['confidence'], reverse=True)[0:3]
-        for room in sorted_rooms:
-            send_image_for_specific_labeling(room['s3_url'], room['room'])
+    ROOM_COUNTS = {'kitchen': 3, 'bathroom': 3, 'general': 3, 'exterior': 3}
+    sorted_rooms = sorted(all_images_with_rooms_and_confidence,
+                          key=lambda x: x['confidence'], reverse=True)
+    for item in sorted_rooms:
+
+        try:
+            number_of_pictures_needed = ROOM_COUNTS[item['room']]
+        except:
+            number_of_pictures_needed = 0
+            print('room not matched', item['room'])
+        print(item)
+        if number_of_pictures_needed > 0:
+            send_image_for_specific_labeling(item['s3_url'], item['room'])
+            ROOM_COUNTS[item['room']] = number_of_pictures_needed - 1
+        else:
+            mark_image_as_unknown_room(item['s3_url'])
 
 # ## Extracting Images from Listing Dictionary, Downloading Images, Saving to S3, and Recording S3 Location in Listing Dictionary for Computer Vision Model to Work off S3 Data
 
