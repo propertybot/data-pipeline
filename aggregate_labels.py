@@ -63,6 +63,14 @@ def get_setiment(label, confidence):
     return 0
 
 
+def exists(hash_key):
+    try:
+        item = analyzed_images_table.get_item(Key={'id': hash_key})
+    except boto3.dynamodb.exceptions.DynamoDBKeyNotFoundError:
+        item = None
+    return item
+
+
 def ai_on_images(image_url_dict, listings_dict):
 
     tagged_image_dict = {}
@@ -74,11 +82,11 @@ def ai_on_images(image_url_dict, listings_dict):
             temp_labels = []
             prefix = url.replace("s3://propertybot-v3/", "")
 
-            fetched_item = analyzed_images_table.get_item(
-                Key={'id': prefix})
-            if 'Item' in fetched_item:
+            fetched_item = exists(prefix)
+            if not fetched_item:
                 print("Image not already in dynamo")
                 raise Exception('Image not already in dynamo')
+
             labels = fetched_item['Item']['labels']
             room = next(iter(labels.keys() or []), None)
             if room == None:
