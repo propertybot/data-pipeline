@@ -354,7 +354,7 @@ def map_external_room_label_to_internal(room):
     elif room == 'bathroom':
         return 'bathroom'
     elif room == 'exterior':
-        room = 'exterior'
+        return 'exterior'
     else:
         print("not matched")
         print(room)
