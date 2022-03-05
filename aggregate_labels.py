@@ -81,7 +81,8 @@ def ai_on_images(image_url_dict, listings_dict):
         for url in v:
             temp_labels = []
             prefix = url.replace("s3://propertybot-v3/", "")
-
+            print("FETCHING")
+            print(prefix)
             fetched_item = exists(prefix)
             if not fetched_item:
                 print("Image not already in dynamo")
@@ -90,6 +91,8 @@ def ai_on_images(image_url_dict, listings_dict):
             else:
                 print("FETCHED ITEM")
                 print(fetched_item)
+                print(prefix)
+
             labels = fetched_item['Item']['labels']
             room = next(iter(labels.keys() or []), None)
             if room == None:
@@ -152,9 +155,8 @@ def save_finalized_data(listings_dict):
     return None
 
 
-def put_property(record, dynamodb=None):
-    if not dynamodb:
-        dynamodb = boto3.resource('dynamodb')
+def put_property(record):
+    dynamodb = boto3.resource('dynamodb')
 
     table = dynamodb.Table('properties')
     response = table.put_item(
@@ -177,4 +179,6 @@ def send_property_to_server(property):
 def lambda_handler(event, context):
     for record in event['Records']:
         body = json.loads(record["body"])
+        print("BODY LIKE A BACKROAD")
+        print(body)
         ai_on_images(body['image_url_dict'], body['listings_dict'])
