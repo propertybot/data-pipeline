@@ -344,7 +344,7 @@ def extract_images_from_listings(listings_dict):
 
 def map_external_room_label_to_internal(room):
     print("MAPPING")
-    print(room)
+    print
     GENERAL_ROOMS = ['living_room', 'dining_room', 'bedroom']
     if room == 'kitchen':
         return 'kitchen'
@@ -378,7 +378,7 @@ def send_image_for_specific_labeling(s3_url, room):
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/general-room-queue'
     elif room == 'bathroom':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/bathroom-labeler-queue'
-    elif room in 'exterior':
+    elif room == 'exterior':
         queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/exterior-labeler-queue'
     else:
         mark_image_as_unknown_room(photo)
