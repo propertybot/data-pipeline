@@ -1,5 +1,6 @@
 import json
 import boto3
+import decimal
 
 
 def show_custom_labels(model, bucket, photo, min_confidence, region_name):
@@ -19,8 +20,11 @@ def show_custom_labels(model, bucket, photo, min_confidence, region_name):
 def save_labels(image_id, labels):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('analyzed_images')
+    ddb_data = json.loads(json.dumps(
+        {"id": image_id, "labels": labels}), parse_float=Decimal)
+
     response = table.put_item(
-        Item={"id": image_id, "labels": labels}
+        Item=ddb_data
     )
     return response
 
