@@ -54,4 +54,6 @@ def analyze_image(room, photo):
 def lambda_handler(event, context):
     for record in event['Records']:
         body = json.loads(record["body"])
-        analyze_image(body['room', 'photo'])
+        print("ANALYZING")
+        print(body)
+        analyze_image(body['room'], body['photo'])
