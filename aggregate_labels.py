@@ -148,7 +148,8 @@ def save_finalized_data(listings_dict):
         print("INFO: saving data for property_id: {0}".format(k))
 
         # had to parse float decimal because files could not be saved to DynamoDB
-        ddb_data = json.loads(json.dumps(payload), cls=DecimalEncoder)
+        ddb_data = json.loads(json.dumps(
+            payload, cls=DecimalEncoder), parse_float=decimal.Decimal)
         print("LOADED")
         put_property(record=ddb_data)
         print("INFO: PUT PROPERTY data for property_id: {0}".format(k))
@@ -160,7 +161,7 @@ def save_finalized_data(listings_dict):
 
 def put_property_to_s3(json_data):
     s3 = boto3.resource('s3')
-    s3object = s3.Object('completed_properties', json_data['property_id'])
+    s3object = s3.Object('completed-properties', json_data['property_id'])
 
     s3object.put(
         Body=(bytes(json.dumps(json_data, cls=DecimalEncoder).encode('UTF-8')))
