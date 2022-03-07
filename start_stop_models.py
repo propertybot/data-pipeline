@@ -28,13 +28,7 @@ def start_model(project_arn, model_arn, version_name, min_inference_units):
 
 def main_start_model(room):
     min_inference_units = 1
-    if room == 'room':
-        # Start main model
-        project_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/PropertyBot-v3-room-rekognition/1630820983471'
-        model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/PropertyBot-v3-room-rekognition/version/PropertyBot-v3-room-rekognition.2021-09-04T22.57.53/1630821474130'
-        version_name = 'PropertyBot-v3-room-rekognition.2021-09-04T22.57.53'
-        start_model(project_arn, model_arn, version_name, min_inference_units)
-    elif room == 'bathroom':
+    if room == 'bathroom':
         # Start Bathroom Labeling
         project_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labels-full/1644725406862'
         model_arn = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labels-full/version/bathroom-labels-full.2022-02-23T09.26.05/1645637165819'
