@@ -22,16 +22,6 @@ s3 = boto3.resource('s3')
 s3_client = boto3.client('s3')
 sqs = boto3.client('sqs')
 
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            if o % 1 > 0:
-                return float(o)
-            else:
-                return int(o)
-        return super(DecimalEncoder, self).default(o)
-
 # Wrapper helper class to do regex matching
 
 

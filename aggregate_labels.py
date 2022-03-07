@@ -8,6 +8,16 @@ dynamodb = boto3.resource('dynamodb')
 analyzed_images_table = dynamodb.Table('analyzed_images')
 
 
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            if o % 1 > 0:
+                return float(o)
+            else:
+                return int(o)
+        return super(DecimalEncoder, self).default(o)
+
+
 def show_custom_labels(model, bucket, photo, min_confidence, region_name):
     client = boto3.client('rekognition', region_name=region_name)
 
@@ -140,7 +150,8 @@ def save_finalized_data(listings_dict):
         print("INFO: saving data for property_id: {0}".format(k))
 
         # had to parse float decimal because files could not be saved to DynamoDB
-        ddb_data = json.loads(json.dumps(payload), parse_float=decimal.Decimal)
+        ddb_data = json.loads(json.dumps(payload), cls=DecimalEncoder)
+        print("LOADED")
         put_property(record=ddb_data)
         print("INFO: PUT PROPERTY data for property_id: {0}".format(k))
 
@@ -154,7 +165,7 @@ def put_property_to_s3(json_data):
     s3object = s3.Object('completed_properties', json_data['property_id'])
 
     s3object.put(
-        Body=(bytes(json.dumps(json_data).encode('UTF-8')))
+        Body=(bytes(json.dumps(json_data, cls=DecimalEncoder).encode('UTF-8')))
     )
 
 
@@ -165,7 +176,9 @@ def put_property(record):
     response = table.put_item(
         Item=record
     )
+    print("PUT IN DYNAMO")
     put_property_to_s3(record)
+    print("PUT IN s3")
     return response
 
 
@@ -176,13 +189,13 @@ def send_property_to_server(property):
     sqs.send_message(
         QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties_test',
         DelaySeconds=10,
-        MessageBody=(json.dumps(property))
+        MessageBody=(json.dumps(property, cls=DecimalEncoder)))
     )
 
 
 def lambda_handler(event, context):
     for record in event['Records']:
-        body = json.loads(record["body"])
+        body=json.loads(record["body"])
         print("BODY LIKE A BACKROAD")
         print(body)
         try:
