@@ -17,7 +17,6 @@ def stop_model(room):
 def lambda_handler(event, context):
     stop_model('kitchen')
     stop_model('general')
-    stop_model('room')
     stop_model('bathroom')
     stop_model('exterior')
     return {
