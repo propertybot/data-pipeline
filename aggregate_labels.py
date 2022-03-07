@@ -84,17 +84,11 @@ def ai_on_images(image_url_dict, listings_dict):
         for url in v:
             temp_labels = []
             prefix = url.replace("s3://propertybot-v3/", "")
-            print("FETCHING")
-            print(prefix)
             fetched_item = exists(prefix)
             if not fetched_item:
                 print("Image not already in dynamo")
                 print(prefix)
                 raise Exception('Image not already in dynamo')
-            else:
-                print("FETCHED ITEM")
-                print(fetched_item)
-                print(prefix)
             labels = fetched_item['labels']
             room = fetched_item['room']
             if room == None:
@@ -191,4 +185,9 @@ def lambda_handler(event, context):
         body = json.loads(record["body"])
         print("BODY LIKE A BACKROAD")
         print(body)
-        ai_on_images(body['image_url_dict'], body['listings_dict'])
+        try:
+            ai_on_images(body['image_url_dict'], body['listings_dict'])
+        except Exception as inst:
+            print("FUCKKKKKK")
+            print(inst)
+            raise Exception('fucking it up in here')
