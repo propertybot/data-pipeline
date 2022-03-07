@@ -144,7 +144,7 @@ def save_finalized_data(listings_dict):
         put_property(record=ddb_data)
         print("INFO: PUT PROPERTY data for property_id: {0}".format(k))
 
-        send_property_to_server(payload)
+        send_property_to_server(ddb_data)
         print("INFO: SENT PROPERTY for property_id: {0}".format(k))
     return None
 
