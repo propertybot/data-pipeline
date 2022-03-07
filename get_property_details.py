@@ -367,6 +367,7 @@ def map_external_room_label_to_internal(room):
 
 def mark_image_as_unknown_room(image_id):
     dynamodb = boto3.resource('dynamodb')
+    image_id = image_id.replace("s3://propertybot-v3/", "")
     table = dynamodb.Table('analyzed_images')
     response = table.put_item(
         Item={"id": image_id, "labels": {}, 'room': None}
