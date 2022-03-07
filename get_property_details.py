@@ -253,7 +253,7 @@ def create_listing_dict(properties):
 
 
 def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
-    ROOM_COUNTS = {'kitchen': 3, 'bathroom': 3, 'general': 3, 'exterior': 3}
+    ROOM_COUNTS = {'kitchen': 3, 'bathroom': 2, 'general': 3, 'exterior': 3}
     sorted_rooms = sorted(all_images_with_rooms_and_confidence,
                           key=lambda x: x['confidence'], reverse=True)
     for item in sorted_rooms:
@@ -302,7 +302,7 @@ def extract_images_from_listings(listings_dict):
                 room = None
                 if tags:
                     max_prob = max((tag['probability'] for tag in tags) or [])
-                    if max_prob and max_prob > 0.8:
+                    if max_prob:
                         room = [tag['label']
                                 for tag in tags if tag['probability'] == max_prob][0]
                         room = map_external_room_label_to_internal(room)
