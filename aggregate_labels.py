@@ -189,13 +189,13 @@ def send_property_to_server(property):
     sqs.send_message(
         QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties_test',
         DelaySeconds=10,
-        MessageBody=(json.dumps(property, cls=DecimalEncoder)))
+        MessageBody=(json.dumps(property, cls=DecimalEncoder))
     )
 
 
 def lambda_handler(event, context):
     for record in event['Records']:
-        body=json.loads(record["body"])
+        body = json.loads(record["body"])
         print("BODY LIKE A BACKROAD")
         print(body)
         try:
