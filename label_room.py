@@ -17,25 +17,16 @@ def show_custom_labels(model, bucket, photo, min_confidence, region_name):
     return response['CustomLabels']
 
 
-def save_labels(image_id, labels):
+def save_labels(image_id, labels, room):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('analyzed_images')
     ddb_data = json.loads(json.dumps(
-        {"id": image_id, "labels": labels}), parse_float=decimal.Decimal)
+        {"id": image_id, "labels": labels, 'room': room}), parse_float=decimal.Decimal)
 
     response = table.put_item(
         Item=ddb_data
     )
     return response
-
-
-def send_image_for_specific_labeling(photo, queue_url, room):
-    sqs = boto3.client('sqs')
-    sqs.send_message(
-        QueueUrl=queue_url,
-        DelaySeconds=10,
-        MessageBody=(json.dumps({"photo": photo, "room": room}))
-    )
 
 
 def analyze_image(room, photo):
@@ -52,7 +43,7 @@ def analyze_image(room, photo):
     min_confidence = 20
     labels = show_custom_labels(
         model, bucket, photo, min_confidence, region_name)
-    save_labels(photo, labels)
+    save_labels(photo, labels, room)
 
 
 def lambda_handler(event, context):

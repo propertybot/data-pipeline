@@ -95,18 +95,15 @@ def ai_on_images(image_url_dict, listings_dict):
                 print("FETCHED ITEM")
                 print(fetched_item)
                 print(prefix)
-
             labels = fetched_item['labels']
-            room = next(iter(labels.keys() or []), None)
+            room = fetched_item['room']
             if room == None:
                 continue
-            all_labels.append(labels)
             if room not in aggregated_labels:
                 sentiment = {}
             else:
                 sentiment = aggregated_labels[room]
-
-            for v in labels[room]:
+            for v in labels:
                 strippedName = v['Name'].replace(room, '')
                 baseLabel = get_base_label(strippedName)
                 if baseLabel.startswith('-'):
@@ -158,6 +155,15 @@ def save_finalized_data(listings_dict):
     return None
 
 
+def put_property_to_s3(json_data):
+    s3 = boto3.resource('s3')
+    s3object = s3.Object('completed_properties', json_data['property_id'])
+
+    s3object.put(
+        Body=(bytes(json.dumps(json_data).encode('UTF-8')))
+    )
+
+
 def put_property(record):
     dynamodb = boto3.resource('dynamodb')
 
@@ -165,6 +171,7 @@ def put_property(record):
     response = table.put_item(
         Item=record
     )
+    put_property_to_s3(record)
     return response
 
 

@@ -369,7 +369,7 @@ def mark_image_as_unknown_room(image_id):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('analyzed_images')
     response = table.put_item(
-        Item={"id": image_id, "labels": {}}
+        Item={"id": image_id, "labels": {}, 'room': None}
     )
     return response
 
