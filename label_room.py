@@ -32,6 +32,7 @@ def save_labels(image_id, labels, room):
 def analyze_image(room, photo):
     bucket = "propertybot-v3"
     region_name = 'us-east-1'
+    min_confidence = 20
     if room == 'kitchen':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/kitchen-labeling/version/kitchen-labeling.2022-02-11T14.16.28/1644617789083'
     elif room == 'general':
@@ -39,8 +40,8 @@ def analyze_image(room, photo):
     elif room == 'bathroom':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labels-full/version/bathroom-labels-full.2022-02-23T09.26.05/1645637165819'
     elif room == 'exterior':
+        min_confidence = 40
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/exterior-labeling/version/exterior-labeling.2022-02-11T13.57.21/1644616642106'
-    min_confidence = 20
     labels = show_custom_labels(
         model, bucket, photo, min_confidence, region_name)
     save_labels(photo, labels, room)
