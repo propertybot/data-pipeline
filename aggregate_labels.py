@@ -22,7 +22,7 @@ def show_custom_labels(model, bucket, photo, min_confidence, region_name):
     client = boto3.client('rekognition', region_name=region_name)
 
     # Call DetectCustomLabels
-    response = client.detect_custom_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo}},
+    response = client.detect_custom_labels(Image={'S3Object': {'Bucket': bucket, 'Name': photo + '.json'}},
                                            MinConfidence=min_confidence,
                                            ProjectVersionArn=model)
 
@@ -105,6 +105,7 @@ def ai_on_images(image_url_dict, listings_dict):
                 sentiment = {}
             else:
                 sentiment = aggregated_labels[room]
+            all_labels.push(labels)
             for v in labels:
                 strippedName = v['Name'].replace(room, '')
                 baseLabel = get_base_label(strippedName)
@@ -134,7 +135,7 @@ def ai_on_images(image_url_dict, listings_dict):
 
         listings_dict[k]['labeled_photos'] = big_dict
         listings_dict[k]['aggregated_labels'] = aggregated_labels
-        # listings_dict[k]['all_labels'] = all_labels
+        listings_dict[k]['all_labels'] = all_labels
     save_finalized_data(listings_dict)
 
 # In[14]:
@@ -153,8 +154,10 @@ def save_finalized_data(listings_dict):
         print("LOADED")
         put_property(record=ddb_data)
         print("INFO: PUT PROPERTY data for property_id: {0}".format(k))
-
-        send_property_to_server(ddb_data)
+        # del payload['property_info']['all_labels']
+        smaller_data = json.loads(json.dumps(
+            payload, cls=DecimalEncoder), parse_float=decimal.Decimal)
+        send_property_to_server(smaller_data)
         print("INFO: SENT PROPERTY for property_id: {0}".format(k))
     return None
 

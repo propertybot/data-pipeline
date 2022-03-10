@@ -111,7 +111,7 @@ functions:
     name: exterior_labeler
     handler: label_room.lambda_handler
     description: Determines custom labels on exteriors.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     events:
@@ -143,7 +143,7 @@ functions:
     name: general_labeler
     handler: label_room.lambda_handler
     description: Determines custom labels on general/generic rooms.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     events:
