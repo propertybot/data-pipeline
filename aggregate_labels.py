@@ -105,7 +105,7 @@ def ai_on_images(image_url_dict, listings_dict):
                 sentiment = {}
             else:
                 sentiment = aggregated_labels[room]
-            all_labels.push(labels)
+            all_labels = all_labels + labels
             for v in labels:
                 strippedName = v['Name'].replace(room, '')
                 baseLabel = get_base_label(strippedName)
