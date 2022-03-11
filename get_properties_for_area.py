@@ -33,7 +33,8 @@ def get_listing(city, state_code, offset):
 
 
 def run_areas():
-    areas = [['Los Angeles', 'CA'], ['Cleveland', 'OH'], ['Austin', 'TX']]
+    areas = [['Los Angeles', 'CA'], ['Cleveland', 'OH'], [
+        'Austin', 'TX'], ["Phoenix", "AZ"], ["Charlotte", "NC"]]
     messages = 0
     for area in areas:
         pull_more_properties = True
@@ -52,7 +53,7 @@ def run_areas():
                 pull_more_properties = False
             offset += 200
         for property in properties:
-            property['area_identifier'] = areas[0]
+            property['area_identifier'] = area[0]
             messages += 1
             send_property_to_queue(property)
     return messages
