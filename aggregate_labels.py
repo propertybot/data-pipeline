@@ -164,7 +164,8 @@ def save_finalized_data(listings_dict):
 
 def put_property_to_s3(json_data):
     s3 = boto3.resource('s3')
-    s3object = s3.Object('completed-properties', json_data['property_id'])
+    s3object = s3.Object('completed-properties',
+                         json_data['property_id'] + '.json')
 
     s3object.put(
         Body=(bytes(json.dumps(json_data, cls=DecimalEncoder).encode('UTF-8')))
@@ -191,7 +192,7 @@ def send_property_to_server(property):
     sqs.send_message(
         QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties',
         DelaySeconds=10,
-        MessageBody=(json.dumps(property, cls=DecimalEncoder))
+        MessageBody=property
     )
 
 
