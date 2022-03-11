@@ -192,7 +192,8 @@ def send_property_to_server(property):
     sqs.send_message(
         QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/cleaned_properties',
         DelaySeconds=10,
-        MessageBody=property
+        MessageBody=json.dumps(
+            property, cls=DecimalEncoder)
     )
 
 
