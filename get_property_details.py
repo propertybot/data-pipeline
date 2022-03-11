@@ -262,8 +262,6 @@ def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
             number_of_pictures_needed = ROOM_COUNTS[item['room']]
         except:
             number_of_pictures_needed = 0
-            print('room not matched', item['room'])
-        print(item)
         if number_of_pictures_needed > 0:
             send_image_for_specific_labeling(item['s3_url'], item['room'])
             ROOM_COUNTS[item['room']] = number_of_pictures_needed - 1
@@ -350,8 +348,7 @@ def map_external_room_label_to_internal(room):
     elif room == 'exterior':
         return 'exterior'
     else:
-        print("not matched")
-        print(room)
+        print("not matched room here", room)
         return None
 
 
