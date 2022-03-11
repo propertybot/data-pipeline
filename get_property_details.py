@@ -253,7 +253,7 @@ def create_listing_dict(properties):
 
 
 def get_top_pictures_for_room(all_images_with_rooms_and_confidence):
-    ROOM_COUNTS = {'kitchen': 3, 'bathroom': 2, 'general': 3, 'exterior': 3}
+    ROOM_COUNTS = {'kitchen': 3, 'bathroom': 2, 'general': 8, 'exterior': 8}
     sorted_rooms = sorted(all_images_with_rooms_and_confidence,
                           key=lambda x: x['confidence'], reverse=True)
     for item in sorted_rooms:

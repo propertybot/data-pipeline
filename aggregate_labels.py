@@ -51,7 +51,8 @@ def send_image_for_specific_labeling(photo, queue_url, room):
 
 
 def get_base_label(label):
-    words_to_strip = ['neutral', 'ugly', 'new', 'nice', 'old', 'dark']
+    words_to_strip = ['neutral', 'ugly', 'new',
+                      'nice', 'old', 'dark', 'destroyed']
     for word in words_to_strip:
         label = label.replace(word, '')
     if 'light-fix' not in label:
@@ -60,7 +61,7 @@ def get_base_label(label):
 
 
 def get_setiment(label, confidence):
-    negative_identifers = ['old', 'ugly']
+    negative_identifers = ['old', 'ugly', 'destroyed']
     positive_identifers = ['nice', 'neutral', 'new']
     for identifier in negative_identifers:
         if identifier in label:

@@ -21,7 +21,7 @@ def get_listing(city, state_code, offset):
     url = "https://realty-in-us.p.rapidapi.com/properties/v2/list-for-sale"
 
     querystring = {"city": city, "state_code": state_code, "offset": offset,
-                   "limit": 200, "sort": "newest", "prop_type": "single_family, multi_family"}
+                   "limit": 20, "sort": "newest", "prop_type": "single_family, multi_family"}
     headers = {
         'x-rapidapi-key': "4519f6dcffmshfadff8b94661096p1989c5jsn14919517996b",
         'x-rapidapi-host': "realty-in-us.p.rapidapi.com"
@@ -33,7 +33,7 @@ def get_listing(city, state_code, offset):
 
 
 def run_areas():
-    areas = [['Los Angeles', 'CA'], ['Cleveland', 'OH']]
+    areas = [['Los Angeles', 'CA'], ['Cleveland', 'OH'], ['Austin', 'TX']]
     messages = 0
     for area in areas:
         pull_more_properties = True
