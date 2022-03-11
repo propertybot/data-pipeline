@@ -185,9 +185,9 @@ functions:
         - "!package-lock.json"
         - "!package.json"
 
-  markPropertySold:
-    name: mark_property_sold
-    handler: mark_property_sold.lambda_handler
+  markSold:
+    name: mark_sold
+    handler: mark_sold.lambda_handler
     description: Marks the property sold in RDS.
     timeout: 10 # seconds
     memorySize: 128 # mb
