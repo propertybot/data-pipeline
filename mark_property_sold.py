@@ -31,6 +31,8 @@ def mark_sold(property):
 
 
 def lambda_handler(event, context):
+    print(event)
+    raise Exception('Blocked')
     for record in event['Records']:
         property = json.loads(record["body"])
         mark_sold(property)
