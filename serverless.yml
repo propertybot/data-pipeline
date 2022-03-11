@@ -50,6 +50,8 @@ functions:
     description: Starts all Rekognition models before ingestion jobs.
     timeout: 10 # seconds
     memorySize: 128 # mb
+    events:
+      - sns: arn:aws:sns:us-east-1:735074111034:remodel-queues-empty
     package:
       patterns:
         - "!node_modules/**"
