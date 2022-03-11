@@ -11,10 +11,10 @@ analyzed_images_table = dynamodb.Table('analyzed_images')
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
-            if o % 1 > 0:
-                return float(o)
-            else:
+            if o % 1 == 0:
                 return int(o)
+            else:
+                return float(o)
         return super(DecimalEncoder, self).default(o)
 
 
