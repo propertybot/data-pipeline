@@ -191,8 +191,8 @@ functions:
     description: Marks the property sold in RDS.
     timeout: 10 # seconds
     memorySize: 128 # mb
-    events:
-      - sqs: arn:aws:sqs:us-east-1:735074111034:sold-properties
+    # events:
+    #   - sqs: arn:aws:sqs:us-east-1:735074111034:sold-properties
     package:
       patterns:
         - "!node_modules/**"
