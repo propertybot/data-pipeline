@@ -179,9 +179,7 @@ def put_property(record):
     response = table.put_item(
         Item=record
     )
-    print("PUT IN DYNAMO")
     put_property_to_s3(record)
-    print("PUT IN s3")
     return response
 
 
