@@ -65,7 +65,7 @@ functions:
     name: get_properties_for_area
     handler: get_properties_for_area.lambda_handler
     description: Get and enqueue all properties for a specific area.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     package:
       patterns:
@@ -78,7 +78,7 @@ functions:
     name: get_property_details
     handler: get_property_details.lambda_handler
     description: Get details and enrich a specific property.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO!
@@ -97,7 +97,7 @@ functions:
     name: kitchen_labeler
     handler: label_room.lambda_handler
     description: Determines custom labels on kitchens.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     events:
@@ -129,7 +129,7 @@ functions:
     name: bathroom_labeler
     handler: label_room.lambda_handler
     description: Determines custom labels on bathrooms.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     events:
@@ -161,7 +161,7 @@ functions:
     name: label_aggregates
     handler: aggregate_labels.lambda_handler
     description: Aggregates all labels for a given property.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
     events:
@@ -178,7 +178,7 @@ functions:
     name: get_sold_properties_for_area
     handler: get_sold_properties_for_area.lambda_handler
     description: Get all the sold properties for a specific area.
-    timeout: 30 # seconds
+    timeout: 90 # seconds
     memorySize: 128 # mb
     package:
       patterns:

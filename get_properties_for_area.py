@@ -37,11 +37,12 @@ def run_areas():
         'Austin', 'TX'], ["Phoenix", "AZ"], ["Charlotte", "NC"]]
     messages = 0
     for area in areas:
+        identifier = area[0]
         pull_more_properties = True
         offset = 200
         properties = []
         while pull_more_properties:
-            info = get_listing(area[0], area[1], offset)
+            info = get_listing(identifier, area[1], offset)
             properties = properties + info['properties']
             index = len(properties)
             last_property = properties[index - 1]
@@ -53,7 +54,7 @@ def run_areas():
                 pull_more_properties = False
             offset += 200
         for property in properties:
-            property['area_identifier'] = area[0]
+            property['area_identifier'] = identifier
             messages += 1
             send_property_to_queue(property)
     return messages

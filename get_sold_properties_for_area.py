@@ -48,6 +48,7 @@ def run_areas():
         offset = 200
         properties = []
         while pull_more_properties:
+            area_identifier = area[0]
             info = get_sales(area[0], area[1], offset)
             properties = properties + info['properties']
             index = len(properties)
@@ -64,7 +65,7 @@ def run_areas():
                 pull_more_properties = False
             offset += 200
         for property in properties:
-            property['area_identifier'] = areas[0]
+            property['area_identifier'] = area_identifier
             property['sold_date'] = property['last_update']
             messages += 1
             send_property_to_queue(property)

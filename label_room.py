@@ -46,6 +46,7 @@ def analyze_image(room, photo):
         return
     elif room == 'bathroom':
         model = 'arn:aws:rekognition:us-east-1:735074111034:project/bathroom-labels-full/version/bathroom-labels-full.2022-02-23T09.26.05/1645637165819'
+        min_confidence = 30
     labels = show_custom_labels(
         model, bucket, photo, min_confidence, region_name)
     save_labels(photo, labels, room)
