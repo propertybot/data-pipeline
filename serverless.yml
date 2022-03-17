@@ -167,6 +167,8 @@ functions:
     description: Get all the sold properties for a specific area.
     timeout: 90 # seconds
     memorySize: 128 # mb
+    # events:
+    #   - schedule: cron(0 */1 * * * *)
     package:
       patterns:
         - "!node_modules/**"
