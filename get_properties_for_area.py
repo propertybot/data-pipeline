@@ -114,5 +114,5 @@ def lambda_handler(event, context):
     messages = run_areas()
     return {
         'statusCode': 200,
-        'body': json.dumps('Enqueued ' + str(messages) + ' messages on: ' + queue_url)
+        'body': json.dumps('Enqueued ' + str(messages) + ' messages')
     }

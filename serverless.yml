@@ -46,13 +46,15 @@ functions:
         - "!package.json"
 
   # DATA INGESTION FUNCTIONS
-
   getPropertiesForArea:
     name: get_properties_for_area
     handler: get_properties_for_area.lambda_handler
     description: Get and enqueue all properties for a specific area.
-    timeout: 90 # seconds
+    timeout: 180 # seconds
     memorySize: 128 # mb
+    # events:
+    #   - schedule: cron(0 12 * * * *)
+
     package:
       patterns:
         - "!node_modules/**"
