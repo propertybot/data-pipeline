@@ -15,20 +15,6 @@ package:
   individually: true
 
 functions:
-  # STARTING STOPPING MODEL FUNCTIONS
-  startAllModels:
-    name: start_all_models
-    handler: start_all_models.lambda_handler
-    description: Starts all Rekognition models before ingestion jobs.
-    timeout: 10 # seconds
-    memorySize: 128 # mb
-    package:
-      patterns:
-        - "!node_modules/**"
-        - "!yarn.lock"
-        - "!package-lock.json"
-        - "!package.json"
-
   startStopModel:
     name: start_stop_models
     handler: start_stop_models.lambda_handler
@@ -81,9 +67,8 @@ functions:
     timeout: 90 # seconds
     memorySize: 128 # mb
     reservedConcurrency: 1 # optional, reserved concurrency limit for this function. By default, AWS uses account concurrency limit
-    # UNCOMMENT WHEN YOU WANT THE JOBS TO RUN YO!
-    # events:
-    #   - sqs: arn:aws:sqs:us-east-1:735074111034:new-listings-stage
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:new-listings
     package:
       patterns:
         - "!node_modules/**"

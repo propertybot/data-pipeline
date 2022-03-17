@@ -4,17 +4,66 @@ import json
 
 dynamodb = boto3.resource('dynamodb')
 sqs = boto3.client('sqs')
+cloudwatch = boto3.client('cloudwatch')
 
 properties_table = dynamodb.Table('properties')
-queue_url = 'https://sqs.us-east-1.amazonaws.com/735074111034/new-listings'
 
 
 def send_property_to_queue(message):
     sqs.send_message(
-        QueueUrl=queue_url,
+        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/new-listings',
         DelaySeconds=10,
         MessageBody=(json.dumps(message))
     )
+
+
+def create_cloudwatch_alarm(alarmName, queueName):
+    cloudwatch.put_metric_alarm(
+        AlarmName=alarmName,
+        AlarmActions=[
+            'arn:aws:sns:us-east-1:735074111034:remodel-queues-empty'],
+        ComparisonOperator='GreaterThanThreshold',
+        EvaluationPeriods=1,
+        MetricName='ApproximateNumberOfMessagesVisible',
+        Namespace='AWS/SQS',
+        Dimensions=[
+            {
+                'Name': 'QueueName',
+                'Value': queueName
+            },
+        ],
+        Period=300,
+        Unit='Seconds',
+        Statistic='Maximum',
+        Threshold=0,
+        ActionsEnabled=True,
+        AlarmDescription='Alarm when the bathroom queue is empty and we need to turn model off'
+    )
+
+
+cloudwatch.delete_alarms(
+    AlarmNames=[
+        'bathroom-queue-empty',
+    ]
+)
+
+
+def start_model(room, alarm_name, queue_name):
+    create_cloudwatch_alarm(alarm_name, queue_name)
+    sqs.send_message(
+        QueueUrl='https://sqs.us-east-1.amazonaws.com/735074111034/rekognition-models',
+        DelaySeconds=10,
+        MessageBody=(json.dumps({"room": room, "type": "start"}))
+    )
+
+
+def start_all_models():
+    start_model('kitchen', 'kitchen-labeler-queue-empty',
+                'kitchen-labeler-queue')
+    start_model('general', 'general-labeler-queue-empty', 'general-room-queue')
+    start_model('bathroom', 'bathrom-queue-empty', 'bathroom-labeler-queue')
+    start_model('exterior', 'exterior-labeler-queue-empty',
+                'exterior-labeler-queue')
 
 
 def get_listing(city, state_code, offset):
@@ -57,6 +106,7 @@ def run_areas():
             property['area_identifier'] = identifier
             messages += 1
             send_property_to_queue(property)
+    start_all_models()
     return messages
 
 

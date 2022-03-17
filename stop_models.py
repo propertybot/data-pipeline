@@ -23,23 +23,18 @@ def lambda_handler(event, context):
         stop_model('general')
         alarm_name = 'exterior-labeler-queue-empty'
     elif 'exterior' in alarm:
-        stop_model('general')
-        alarm_name = 'exterior-labeler-queue-empty'
+        stop_model('exterior')
+        alarm_name = 'general-labeler-queue-empty'
     elif 'bathroom' in alarm:
         stop_model('bathroom')
         alarm_name = 'bathrom-queue-empty'
-    elif 'exterior' in alarm:
-        stop_model('exterior')
+
     cloudwatch = boto3.client('cloudwatch')
 
-    cloudwatch.set_alarm_state(
-        AlarmName=alarm_name,
-        StateValue='OK',
-        StateReason='clearing queue'
+    cloudwatch.delete_alarms(
+        AlarmNames=[alarm_name]
     )
-    cloudwatch.disable_alarm_actions(
-        AlarmNames=[alarm_name],
-    )
+
     return {
         'statusCode': 200,
         'body': json.dumps('Stopped all models!')
