@@ -167,8 +167,8 @@ functions:
     description: Get all the sold properties for a specific area.
     timeout: 90 # seconds
     memorySize: 128 # mb
-    # events:
-    #   - schedule: cron(0 */1 * * * *)
+    events:
+      - schedule: cron(* */1 * * * *)
     package:
       patterns:
         - "!node_modules/**"
@@ -182,8 +182,8 @@ functions:
     description: Marks the property sold in RDS.
     timeout: 10 # seconds
     memorySize: 128 # mb
-    # events:
-    #   - sqs: arn:aws:sqs:us-east-1:735074111034:sold-properties
+    events:
+      - sqs: arn:aws:sqs:us-east-1:735074111034:sold-properties
     package:
       patterns:
         - "!node_modules/**"
