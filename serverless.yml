@@ -168,7 +168,7 @@ functions:
     timeout: 90 # seconds
     memorySize: 128 # mb
     events:
-      - schedule: cron(*/5 */1 * * * *)
+      - schedule: cron(0/5 * * * * *)
     package:
       patterns:
         - "!node_modules/**"
