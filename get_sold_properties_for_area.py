@@ -22,7 +22,7 @@ def get_sales(city, state_code, offset):
     url = "https://realty-in-us.p.rapidapi.com/properties/v2/list-sold"
 
     querystring = {"city": city, "state_code": state_code, "offset": offset,
-                   "limit": 200, "sort": "sold_date", "prop_type": "single_family, multi_family"}
+                   "limit": 200, "sort": "sold_date", "prop_type": "single_family"}
     headers = {
         'x-rapidapi-key': "4519f6dcffmshfadff8b94661096p1989c5jsn14919517996b",
         'x-rapidapi-host': "realty-in-us.p.rapidapi.com"

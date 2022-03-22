@@ -12,19 +12,21 @@ def mark_sold(property):
     cursor = connection.cursor()
 
     print("Table Before updating record ", property['property_id'])
-    sql_select_query = """select * from properties where external_id = '%s'""" % property['property_id']
+
+    sql_select_query = """select * from properties_v2 where external_id = '%s'""" % property['property_id']
     cursor.execute(sql_select_query, property['property_id'])
     record = cursor.fetchone()
     print(record)
+    if(record):
+        # Update single record now
+        sql_update_query = """Update properties_v2 set sold_date = '%s' where external_id = '%s'""" % (
+            property['sold_date'], property['property_id'])
+        cursor.execute(sql_update_query,
+                       (property['sold_date'], property['property_id']))
+        connection.commit()
+        count = cursor.rowcount
+        print(count, "Record Updated successfully ")
 
-    # Update single record now
-    sql_update_query = """Update properties set sold_date = '%s' where external_id = '%s'""" % (
-        property['sold_date'], property['property_id'])
-    cursor.execute(sql_update_query,
-                   (property['sold_date'], property['property_id']))
-    connection.commit()
-    count = cursor.rowcount
-    print(count, "Record Updated successfully ")
     cursor.close()
     connection.close()
     print("PostgreSQL connection is closed")
