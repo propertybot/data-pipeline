@@ -43,6 +43,7 @@ def write_updated_property_to_dynamo(record):
 def run_areas():
     areas = [['Los Angeles', 'CA'], ['Cleveland', 'OH'], [
         'Austin', 'TX'], ["Phoenix", "AZ"], ["Charlotte", "NC"]]
+
     messages = 0
     for area in areas:
         pull_more_properties = True
