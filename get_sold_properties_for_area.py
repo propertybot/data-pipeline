@@ -76,7 +76,6 @@ def run_areas():
 
 def lambda_handler(event, context):
     print(event)
-    raise Exception('Blocked')
     messages = run_areas()
     return {
         'statusCode': 200,
